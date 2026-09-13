@@ -46,3 +46,37 @@ orb -m pwn64 bash -lc 'gdb -q ./chall -ex "b strcmp" -ex r -ex "x/s $rdi" -ex "x
 - 有 `.pyc` 先反编译;有 Java 先 jadx。
 - 大型 Go/Rust 别全量分析,带着假设定位主函数。
 - 不认识的算法/常量,用 `python3 tools/kb.py search "<常量或特征>"` 查资料。
+
+## flag 格式(实测踩过)
+前缀**不固定**,见过 `NSSCTF{...}`、`flag{...}`、`LitCTF{...}` 等。提交前先看题目描述/容器 banner/回显/附件里有没有格式提示。
+若第一次被拒,**优先检查前缀**再改内容;同一格式别重复提交(错误次数多会被判失败,靶场上限 20 次)。
+
+## 加壳与脱壳(实战要点)
+
+### 识别
+```bash
+file packed.bin; objdump -h packed.bin | head        # 看节区名
+# 典型节区名:UPX0/UPX1(UPX)、.aspack/.adata(ASPack)、.themida/.vmp0(VMProtect/Themida)
+strings -a packed.bin | grep -iE "upx|aspack|themida|vmprotect|packed"
+upx -l packed.bin 2>/dev/null                         # UPX 会自报
+```
+特征:入口点落在最后一个节区、节区可写可执行、代码熵很高、导入表极小。
+
+### 脱壳思路(按难度)
+1. **UPX**:直接 `upx -d packed.bin -o unpacked.bin`(最省事)。
+2. **简单壳(ASPack 类)**:找 **OEP**(原始入口点)后内存 dump + 修 IAT:
+   - x86 常用「**ESP 定律**」:入口处 `pushad` 后对栈写硬件断点,跑到 `popad` 附近即接近 OEP;
+   - 无 x64dbg 时的替代:用 `gdb` 断在入口、`catch syscall`/单步跟到 OEP,再用
+     `dump binary memory dump.bin <start> <end>`(或从 `/proc/<pid>/maps` 取段范围)。
+3. **unicorn 模拟脱壳**(无调试器/纯脚本时):
+   ```python
+   from unicorn import *
+   from unicorn.x86_const import *
+   # 映射 PE/ELF 段 -> 在 OEP 附近设 hook 计数 -> 运行到解密完成 -> 把内存段 dump 出来
+   ```
+   适合"壳只做内存解密、不反调试"的情况。
+4. **强壳(VMProtect/Themida)**:不要硬脱,改从**行为**入手——动态跑起来后 hook 关键 API
+   (`ltrace`/`strace`/`LD_PRELOAD`),或直接看它解密后落到磁盘/内存的明文。
+
+### 判据
+脱壳成功的标志:节区恢复可读、导入表完整、`strings` 里出现原本被隐藏的明文字符串(常含 flag 线索)。

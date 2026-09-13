@@ -222,8 +222,11 @@ def test_contest() -> str:
         return "未配置队伍 token"
     try:
         qs = contest_api.list_questions(token, timeout=20)
+    except getattr(contest_api, "ContestError", ()) as e:
+        # 接口通了,但平台业务上拒绝(比赛未开始/已结束、token 无效)——与"网络不通"要分开说
+        return f"接口通了,平台业务提示:{e}(比赛未开始/已结束或 token 无效;开赛后会自动恢复)"
     except Exception as e:
-        return f"接口不通: {str(e)[:220]}"
+        return f"接口不通(网络/地址问题): {str(e)[:200]}"
     if not qs:
         return "接口通了,但题目列表为空(可能比赛未开始或 token 无队伍信息)"
     titles = ", ".join(str(q.get("title")) for q in qs[:6])
@@ -339,6 +342,7 @@ def build_state(project: str = DEFAULT_PROJECT) -> dict:
             "status_label": label or STATUS_LABEL.get(status, status),
             "status_class": "warn" if label else STATUS_CLASS.get(status, ""),
             "attempts": e.get("attempts", 0), "max_attempts": e.get("max_attempts", 0),
+            "unlimited": (e.get("max_attempts", 0) or 0) <= 0,
             "elapsed": int(time.time() - started) if started and e.get("status") == "running" else None,
             "connection": e.get("connection") or {}, "workdir": e.get("workdir") or "",
             "description": (e.get("description") or "")[:200],
@@ -357,11 +361,15 @@ def build_state(project: str = DEFAULT_PROJECT) -> dict:
                 pass
     subs.reverse()
     rstate = read_json(logs / "runner_state.json", {})
+    stale = False
+    if runner_running and rstate.get("heartbeat"):
+        stale = (time.time() - float(rstate["heartbeat"])) > 60   # 60 秒没心跳=可能卡死
     return {
         "now": time.strftime("%H:%M:%S"),
         "solved": sum(1 for q in questions if q["status"] == "solved"), "total": len(questions),
         "running_workers": len(reg), "paused": bool(rstate.get("paused")),
         "limit": rstate.get("limit"), "runner": runner_status(rundir),
+        "runner_stale": stale, "time_left": rstate.get("time_left"), "logs_mb": rstate.get("logs_mb"),
         "project": project, "projects": list_projects(),
         "config": {**config_mod.DEFAULTS, **config_mod.read_env()},
         "facts": list(reversed(board.get("facts", [])[-25:])),
@@ -559,6 +567,7 @@ td.q{font-family:inherit;font-size:12px;color:var(--text)}
     <span class="hstat">runner <b id="k_run">-</b></span>
     <span class="hstat" id="k_pause"></span>
     <span class="hstat">项目 <b id="k_proj">-</b></span>
+    <span class="hstat"><b id="k_time"></b></span>
     <span class="spacer"></span>
     <button id="themebtn" onclick="toggleTheme()" title="切换浅色/深色主题">🌙 深色</button>
     <button onclick="document.body.classList.toggle('collapsed')" title="折叠侧栏">☰</button>
@@ -810,7 +819,7 @@ function renderDetail(){
     </div>`).join('') : '<div class="meta">当前没有 agent 在跑</div>';
   el.innerHTML = `
     <div class="hd"><h3>${esc(q.title)}</h3>${statusPill(q)}</div>
-    <div class="meta">${esc(q.category)} · ${q.score} 分 · 尝试 ${q.attempts}/${q.max_attempts}
+    <div class="meta">${esc(q.category)} · ${q.score} 分 · 尝试 ${q.attempts}${q.unlimited ? ' 次(不限)' : '/' + q.max_attempts}
       ${q.elapsed!=null?` · 已跑 <span class="num">${q.elapsed}s</span>`:''}</div>
     ${q.description?`<div class="meta">${esc(q.description)}</div>`:''}
     ${q.workdir?`<div class="meta">工作区 <code>work/${esc(q.workdir)}</code></div>`:''}

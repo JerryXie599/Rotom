@@ -1,0 +1,63 @@
+[
+ {
+  "id": "FINAL_WEB",
+  "title": "web-file-service",
+  "category": "web",
+  "score": 500,
+  "description": "一个文件服务:GET /files/<文件名> 读取 public/ 下的文件。请想办法读到服务目录之外的文件。",
+  "flag": "flag{w3b_path_tr4versal_9b2c}",
+  "file": "",
+  "connection": {
+   "docker_url": "http://127.0.0.1:19801",
+   "docker_ip": "127.0.0.1",
+   "docker_port": "19801"
+  },
+  "web_service": true
+ },
+ {
+  "id": "FINAL_PWN",
+  "title": "pwn-ret2libc",
+  "category": "pwn",
+  "score": 500,
+  "description": "64 位 ELF 栈溢出(附件含二进制与 libc)。服务端拿到 shell 后 flag 在 flag.txt。",
+  "flag": "flag{07570f15-6b52-4833-890a-f1872cbc89a1}",
+  "file": "pwn01.zip",
+  "service": {
+   "binary": "/tmp/wqh_FINAL_PWN/pwn01_chall",
+   "binary_local": "pwn01_chall",
+   "port": 19802
+  },
+  "connection": {
+   "docker_url": "nc 192.168.139.136 19802",
+   "docker_ip": "192.168.139.136",
+   "docker_port": "19802"
+  }
+ },
+ {
+  "id": "FINAL_REV",
+  "title": "reverse-xor",
+  "category": "reverse",
+  "score": 500,
+  "description": "附件是一个校验口令的程序,passphrase 就是 flag。请逆向得到它。",
+  "flag": "flag{r3v_x0r_0bfusc4t10n_7f3a}",
+  "file": "rev_check"
+ },
+ {
+  "id": "FINAL_CRYPTO",
+  "title": "crypto-small-e",
+  "category": "crypto",
+  "score": 500,
+  "description": "附件给出 RSA 的 n、e、c(明文就是 flag)。",
+  "flag": "flag{sm4ll_e_rs4_4tt4ck_5d81}",
+  "file": "rsa_challenge.txt"
+ },
+ {
+  "id": "FINAL_FORENSIC",
+  "title": "forensics-pcap",
+  "category": "forensics",
+  "score": 500,
+  "description": "流量分析:flag 被 SQL 注入外带,藏在 HTTP 响应里(附件是抓包文件)。",
+  "flag": "flag{a0d78ce4-8072-4e14-939b-cd78392a34f4}",
+  "file": "sqldata.pcapng"
+ }
+]

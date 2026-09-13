@@ -14,16 +14,21 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-import contest_api  # noqa: E402
+if os.environ.get("CONTEST_ADAPTER", "").lower() == "arena":
+    import arena_api as contest_api
+else:
+    import contest_api  # noqa: E402
 
 
 def main() -> int:
     if len(sys.argv) < 2:
         print("usage: reset_env.py <question_id>", file=sys.stderr)
         return 2
-    token = os.environ.get("TEAM_TOKEN", "")
+    token = (os.environ.get("NSSCTF_AGENT_TOKEN", "") or contest_api.agent_token()
+             if os.environ.get("CONTEST_ADAPTER", "").lower() == "arena"
+             else os.environ.get("TEAM_TOKEN", ""))
     if not token:
-        print("TEAM_TOKEN 未设置", file=sys.stderr)
+        print("未设置 token", file=sys.stderr)
         return 2
     try:
         resp = contest_api.reset_env(token, sys.argv[1])

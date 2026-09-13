@@ -107,3 +107,64 @@ python3 tools/kb.py list / search "关键词" / show <方向> / grep "常量" / 
 + `vendor/RsaCtfTool`(可直接跑)。索引自动缓存(`knowledge/.kb_index.json`),8949 段 0.2s。
 **扩库方式**:新套路直接追加到 `knowledge/<方向>.md`;新资料放进 `knowledge/vendor/` 后跑一次 `kb.py reindex` 即可被检索到。
 交付打包用 `--with-knowledge` 一并带上。
+
+## 十、并发与限流(现场给到 50 并发)
+
+- 默认 `START_WORKERS=24`(约一半额度,不贴 50)、`MIN_WORKERS=4`、`WORKERS_PER_QUESTION=2`;
+  想更激进可在网页控制台把「起始并发」调到 30~36。
+- 限流降级是**按比例**的:并发 ≥10 时每步退 20%,冷却 30s;24→4 约 5 分钟到底。
+  识别到额度耗尽(quota)会整体暂停 `QUOTA_BACKOFF` 秒而不是空转。
+- 靶场压测脚本(`tests/arena/run_arena.sh`)固定 `START_WORKERS=2` —— 因为 NSSCTF Arena **每个 Agent 同时只能有一道题**,
+  并发只能体现在"同题 2 个 agent",与比赛的多题并行不是一回事。
+
+## 十一、时间预算(每轮只有 30 分钟,速度第一)
+
+- `.env` 里 `ROUND_WINDOW_MINUTES=30` + `STOP_SPAWN_BEFORE_END=120`:到点杀 worker、最后 2 分钟不再派新题;
+  runner 状态行显示 `剩余 X分Y秒`。设 0 则不限时(平时压测用)。
+- 单题限时 `WORKER_TIMEOUT=420`(7 分钟)、`MAX_ATTEMPTS=4`、`FAILED_RETRY_AFTER=120`、`POLL_INTERVAL=3` —— 都为短窗口调过。
+- prompt 每次下发都带**时间预算**(剩余分钟 + 策略:最短路径 / 过半未破换面 / 剩 3 分钟先提交最有把握的候选)。
+- 改窗口大小只需改 `ROUND_WINDOW_MINUTES`(控制台里改 .env 也行)。
+
+## 十二、健壮性与测试(2026-09-13 加固)
+
+- `./start.sh --supervise`:崩溃自动重启(runner 异常退出 → 5 秒后重来;正常 exit 0 不重启)。
+- 心跳:`logs/runner_state.json.heartbeat`,看板 >60s 无心跳标红「runner 无响应」。
+- 目录自愈 + 孤儿清理 + 窗口兜底(见 .env 的 ROUND_WINDOW_MINUTES)。
+- 测试:`tests/unit_test.py`(28 项离线断言)、`tests/scale_test.py N`(调度回归)、
+  `tests/local_contest.sh`(小规模端到端)、`tests/load/run_load.sh 24`(高并发压测)。
+- 实测容量:24 并发 → 峰值 26 pi 进程 / 4GB 内存 / runner CPU<1%;12 道取证题平均 90s 解出、0 错误提交。
+
+## 十三、长题(pwn)经验(2026-09-13 实测)
+
+- 一道 pwn(i386/amd64 ret2libc)**约需 14~15 分钟墙钟**(2 agent × 2 轮),30 分钟窗口够但要占一半。
+- 三条关键机制保证长题能做完:
+  1. **重试保留工作目录**(agent 的 exp.py/笔记不丢,下轮接着改) + prompt 告知"第 N 次尝试,先看上次的脚本";
+  2. **限时递增** `TIMEOUT_ESCALATE=120`(420→540→660→780s),后轮给更多时间;
+  3. 同题两个 slot 的**工作区准备按题加锁**(否则并发下载/解压会互相删文件,报 FileNotFoundError)。
+- 自建 pwn 服务务必用 `stdbuf -o0` 而不是 `pty`:`pty` 会回显输入 + 行缓冲,和真实容器行为差很多,agent 会误判协议。
+
+## 十四、最终验收(2026-09-13,5 类全覆盖,走网页流程)
+
+- 题集:`tests/final/challenges.json`(web 路径穿越 / pwn ret2libc / reverse XOR / crypto 小公钥指数 / forensics pcap);
+  起环境 `./tests/final/run_final.sh start`(只起题目服务与 mock 接口,runner 请在网页上点「开始跑」)。
+- **结果:5/5 全解、提交全对、约 3 分钟、零人工干预**;首轮退出后自动重试,重试时自动注入知识库片段(约 1.3~1.4KB/题)并解出。
+- 网页全流程实测可用:填配置 → 保存 → 测试接口 → 测试模型 → 新建项目 → 开始跑 → 停止/重启。
+- 明天现场:8799 已恢复比赛配置,只需在控制台填现场模型(Base URL/key/模型名/API 类型)→ 测试模型 → 开始跑。
+
+## 十五、重试与时间边界(2026-09-13 用户定稿)
+
+- **不设重试次数上限**(`MAX_ATTEMPTS=0`),**以时间为界**:从点「开始跑」起,窗口内坏了立刻重试(秒退等 5 秒)。
+- 结束有两种设法:`ROUND_WINDOW_MINUTES=60`(时长)或 `ROUND_END_AT=14:00`(绝对时间,优先)。
+  最后 `STOP_SPAWN_BEFORE_END=120` 秒停止派新题;到点杀所有 worker 并退出,之后不再跟进。
+- **截止时间持久化**:重启(supervise/控制台「重启」)沿用同一 deadline,不会重新计时。
+- 单题限时递增并封顶:`WORKER_TIMEOUT=420` + `TIMEOUT_ESCALATE=120` → 最高 `MAX_WORKER_TIMEOUT=900`。
+- 实测(3 分钟窗口 + 故意打不通的 pwn 服务):窗口内持续自动重试、无"尝试用尽";到点前 20 秒停派新题、
+  到点杀全部 worker、0 残留进程。
+
+## 十六、最终版(2026-09-13 定稿)
+
+- 模型:`deepseek-flash`(`https://api.deepseek.com/v1`,provider `wqh`)。
+- 启动:`./start.sh`(默认崩溃自动重启)或双击 `启动Agent.command`;`--check-only/status/stop/--practice/--project/--workers/--no-supervise`。
+- 计时:从点「开始跑」起 `ROUND_WINDOW_MINUTES=60`,或 `ROUND_END_AT=HH:MM`(优先);
+  截止时间持久化、重启不重置、**过期即重新计时**(隔天启动不会卡死)。
+- 停机:`./start.sh stop` 会同时收掉 supervisor 与所有 agent(0 残留进程)。

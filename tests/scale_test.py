@@ -65,7 +65,7 @@ class FakeProc:
 _next_pid = [10000]
 
 
-def fake_launch(q, slot, total, wdir, env, timeout):
+def fake_launch(q, slot, total, wdir, env, timeout, attempt=1, **kw):  # 与 solver.launch 签名同步
     _next_pid[0] += 1
     log = solver.LOG_DIR / f"{q['question_id']}_w{slot}.jsonl"
     log.write_text('{"type":"agent_start"}\n', encoding="utf-8")

@@ -48,3 +48,20 @@ bkcrack -C a.zip -c inner.txt -p plain.txt    # 已知明文攻击
 - **先 `file` + `strings` + `binwalk`** 三连,再定方向。
 - 编码套娃写脚本循环解,别手工一层层来。
 - 标题/hint 往往就是解法(base/morse/zip 等词直接试),也可 `python3 tools/kb.py search "<hint 内容>"`。
+
+## flag 格式(实测踩过)
+前缀**不固定**,见过 `NSSCTF{...}`、`flag{...}`、`LitCTF{...}` 等。提交前先看题目描述/容器 banner/回显/附件里有没有格式提示。
+若第一次被拒,**优先检查前缀**再改内容;同一格式别重复提交(错误次数多会被判失败,靶场上限 20 次)。
+
+## 脚本/文档编码解码(本机已有工具,离线可用)
+
+| 现象 | 判断 | 工具 |
+|---|---|---|
+| `#@~^......== ... ......==^#~@` | VBScript/JScript Encode(VBE/JSE) | `python3 tools/decoders/vbe_decode.py <文件或编码串>`(已是本地工具,直接可用) |
+| Office 文档带宏 | VBA 宏 | `olevba file.doc` / `oleid file.doc`(oletools 已装) |
+| PDF 里藏字符串 | PDF 对象流 | `pdf-parser.py`、`strings` |
+| 多层文本编码 | base64/hex/base32 套娃 | 见本文 §1 的循环解码脚本 |
+
+VBE 例子(实测):`#@~^DgAAAA==\ko$K6,JC V^GJqAQAAA==^#~@` → `MsgBox "Hello"`。
+先 base64 解一层再遇到 `#@~^` 的,先解 base64 再喂给 vbe_decode.py。
+**不要联网装工具**:断网环境下 `pip/apt/curl` 访问外网会被拒,缺工具就用本地已有实现或自己照算法写。

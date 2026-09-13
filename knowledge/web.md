@@ -38,3 +38,27 @@ payload 不够时用检索工具:`python3 tools/kb.py search "sql 注入 绕过"
 - 容器题服务挂了先点平台「重置环境」。
 - 一次只改一个变量,别同时试 5 种 payload。
 - **先找 flag 位置再构造完整链**:`/flag`、`/flag.txt`、`env`、数据库 `secret.flag` 表、源码注释。
+
+## flag 格式(实测踩过)
+前缀**不固定**,见过 `NSSCTF{...}`、`flag{...}`、`LitCTF{...}` 等。提交前先看题目描述/容器 banner/回显/附件里有没有格式提示。
+若第一次被拒,**优先检查前缀**再改内容;同一格式别重复提交(错误次数多会被判失败,靶场上限 20 次)。
+
+## 框架 / 中间件特性(压测中真实卡住的点)
+
+### Go net/http
+- `http.FileServer` / `http.ServeFile`:目录列表由 `dirList` 生成;`/flag` 若被路由或 handler 拦截,先看
+  是否存在**双重编码/大小写/`//`/`..%2f`** 之类的 path 归一化差异(`path.Clean` 与 URL 解码顺序)。
+- **Range 越界读**:`Range: bytes=0-99999999` 会让 `ServeContent` 返回整个文件,但响应里
+  `Content-Length` 会被校正为实际大小 —— 只拿到部分内容时,改用**不带 Range 的请求**或调整范围。
+- 静态目录列出的文件名若含 `flag`,直接对每个路径试 `GET`、`GET ?download=`、`GET /dir/file%00.txt`。
+- 常见坑:`http.Dir` 会跟随符号链接;`filepath.Join` 与应用层拼接不一致会产生穿越。
+
+### 其他中间件常见差异
+| 栈 | 考点 |
+|---|---|
+| Node/Express | `express.static` 穿越、`sendFile` 路径校验、原型链污染(`__proto__` 合并) |
+| Java Spring | Actuator 端点暴露、路径匹配差异(`/;/`、`%2e`、大小写)、SpEL 注入 |
+| PHP | `php://filter` 读源码、`phtml`/`.user.ini`、反序列化链 |
+| Nginx/Apache | `alias` 目录穿越、CRLF 注入、`.htaccess` 覆盖 |
+
+**思路**:框架题先看**版本**与**路由定义**,再对照该框架已知的路径处理差异;越界读不要只用一种 Range 写法。

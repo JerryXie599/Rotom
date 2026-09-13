@@ -1,0 +1,21 @@
+[
+ {
+  "id": "LOADP00",
+  "title": "pwn-00",
+  "category": "pwn",
+  "score": 500,
+  "description": "64 位 ELF 栈溢出(ret2libc),服务已起;拿到 shell 后读 flag.txt(压测副本)",
+  "flag": "flag{07570f15-6b52-4833-890a-f1872cbc89a1}",
+  "file": "pwn01.zip",
+  "service": {
+   "binary": "/tmp/wqh_LOADP00/pwn01_chall",
+   "binary_local": "pwn01_chall",
+   "port": 19901
+  },
+  "connection": {
+   "docker_url": "nc 192.168.139.136 19901",
+   "docker_ip": "192.168.139.136",
+   "docker_port": 19901
+  }
+ }
+]

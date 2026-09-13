@@ -60,3 +60,7 @@ print(s.check()); print(bytes([s.model()[x].as_long() for x in xs]))
 - 先试 RsaCtfTool 与常见模板;不认识的手法用 `python3 tools/kb.py search "rsa 攻击"` 查。
 - 题目 hint 往往直接指攻击类型,先读。
 - 大数运算用 `gmpy2`(比纯 Python 快几十倍)。
+
+## flag 格式(实测踩过)
+前缀**不固定**,见过 `NSSCTF{...}`、`flag{...}`、`LitCTF{...}` 等。提交前先看题目描述/容器 banner/回显/附件里有没有格式提示。
+若第一次被拒,**优先检查前缀**再改内容;同一格式别重复提交(错误次数多会被判失败,靶场上限 20 次)。

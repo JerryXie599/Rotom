@@ -19,10 +19,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-import contest_api  # noqa: E402
+if os.environ.get("CONTEST_ADAPTER", "").lower() == "arena":
+    import arena_api as contest_api  # 靶场模式
+else:
+    import contest_api  # noqa: E402
 import board as board_mod  # noqa: E402
 
-LOG_DIR = ROOT / "logs"
+# 日志必须落在**当前项目/靶场的数据目录**里,否则审计记录会散到全局 logs/
+RUN_DIR = Path(os.environ.get("WQH_RUN_DIR") or ROOT)
+LOG_DIR = RUN_DIR / "logs"
 
 
 def main() -> int:
@@ -30,9 +35,12 @@ def main() -> int:
         print("usage: submit_flag.py <question_id> <flag>", file=sys.stderr)
         return 2
     qid, flag = sys.argv[1], sys.argv[2].strip()
-    token = os.environ.get("TEAM_TOKEN", "")
+    if os.environ.get("CONTEST_ADAPTER", "").lower() == "arena":
+        token = os.environ.get("NSSCTF_AGENT_TOKEN", "") or contest_api.agent_token()
+    else:
+        token = os.environ.get("TEAM_TOKEN", "")
     if not token:
-        print("TEAM_TOKEN 未设置", file=sys.stderr)
+        print("未设置 token(TEAM_TOKEN 或 NSSCTF_AGENT_TOKEN)", file=sys.stderr)
         return 2
 
     try:

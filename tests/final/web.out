@@ -1,0 +1,1887 @@
+web 服务已起: http://127.0.0.1:19801 (flag 在 /Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/secret_flag.txt)
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56457)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+IsADirectoryError: [Errno 21] Is a directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 61-62: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56465)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+IsADirectoryError: [Errno 21] Is a directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 61-62: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56466)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/xxx'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56467)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/../etc/passwd'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56468)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/../etc/passwd'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56496)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+IsADirectoryError: [Errno 21] Is a directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 61-62: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56497)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/xxx'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56512)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/../etc/passwd'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56513)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/../../etc/passwd'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56514)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/../../../etc/passwd'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56515)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/../../../etc/passwd'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56516)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/../../etc/passwd'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56519)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/a/../../../etc/passwd'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56520)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/..../..../etc/passwd'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56521)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/%2e%2e/%2e%2e/etc/passwd'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56529)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/xxx'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56530)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/test.txt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56531)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/a.txt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56532)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+IsADirectoryError: [Errno 21] Is a directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/..'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 61-62: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56533)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/../etc/passwd'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56534)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/../etc/passwd'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56535)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/../etc/passwd'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56536)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/../etc/passwd'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56537)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/..../etc/passwd'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56538)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+IsADirectoryError: [Errno 21] Is a directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/../..'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 61-62: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56539)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/main.py'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56540)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/flag'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56541)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/flag.txt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56611)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/xxx'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56613)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/a.txt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56614)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/test.txt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56615)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/hello.txt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56616)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/flag.txt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56617)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/flag'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56618)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/readme.txt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56619)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/README.md'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56620)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/1.txt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56621)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/x.txt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56622)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/main.py'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56623)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/app.py'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56624)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/index.py'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56625)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/server.py'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56626)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/public'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56627)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/0.txt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56628)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/catch.txt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 56629)
+Traceback (most recent call last):
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 15, in do_GET
+    data = target.read_bytes()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/public/key.txt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/jerry/.local/python/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi/tests/final/webapp.py", line 17, in do_GET
+    self.send_error(404, str(e)); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 471, in send_error
+    self.send_response(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 506, in send_response
+    self.send_response_only(code, message)
+  File "/Users/jerry/.local/python/lib/python3.12/http/server.py", line 521, in send_response_only
+    (self.protocol_version, code, message)).encode(
+                                            ^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 71-72: ordinal not in range(256)
+----------------------------------------

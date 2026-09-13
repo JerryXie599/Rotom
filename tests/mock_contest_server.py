@@ -105,7 +105,10 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
-        self.wfile.write(body)
+        try:
+            self.wfile.write(body)
+        except (ConnectionResetError, BrokenPipeError):
+            pass  # 压测时客户端超时断开很正常,不必刷栈
 
     def do_GET(self) -> None:  # noqa: N802
         u = urlparse(self.path)
@@ -158,7 +161,10 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Content-Type", "application/octet-stream")
             self.send_header("Content-Length", str(len(data)))
             self.end_headers()
-            self.wfile.write(data)
+            try:
+                self.wfile.write(data)
+            except (ConnectionResetError, BrokenPipeError):
+                pass
             record("download", file=name, bytes=len(data))
         else:
             self.send_error(404)
@@ -173,8 +179,15 @@ def main() -> None:
     ap.add_argument("--port", type=int, default=8899)
     ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--only", help="只启用某些类别,逗号分隔,如 crypto,web")
+    ap.add_argument("--challenges", help="自定义题集 json(默认 tests/challenges.json)")
+    ap.add_argument("--files", help="自定义附件目录(默认 tests/challenge_files)")
     args = ap.parse_args()
 
+    global CHALLENGES, FILES_DIR
+    if args.challenges:
+        CHALLENGES = Path(args.challenges).resolve()
+    if args.files:
+        FILES_DIR = Path(args.files).resolve()
     CHALLENGES_DATA = load_challenges()
     if args.only:
         keep = {c.strip() for c in args.only.split(",")}

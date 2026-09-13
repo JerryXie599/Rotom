@@ -44,7 +44,7 @@ for c in data:
            # 按端口找 PID 再杀,避免用 pkill -f 匹配到自己这条命令把 shell 杀了
            f"for pid in $(ss -lntp 2>/dev/null | grep ':{port} ' | grep -o 'pid=[0-9]*' | cut -d= -f2 | sort -u); "
            f"do kill -9 $pid 2>/dev/null; done; sleep 0.2; "
-           f"(setsid socat TCP-LISTEN:{port},reuseaddr,fork EXEC:'{binary}',pty,stderr "
+           f"(setsid socat TCP-LISTEN:{port},reuseaddr,fork EXEC:"stdbuf -o0 {binary}",stderr "
            f">/tmp/wqh_{c['id']}/socat.log 2>&1 &) ; sleep 0.5; "
            f"echo started_{port}")
     r = subprocess.run(["orb", "-m", vm, "bash", "-lc", cmd], capture_output=True, text=True)

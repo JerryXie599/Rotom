@@ -23,6 +23,8 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
+import threading
+
 ROOT = Path(__file__).resolve().parent          # 代码位置(工具脚本在 ROOT/tools 下)
 RUN_DIR = Path(os.environ.get("WQH_RUN_DIR") or ROOT)  # 本项目的数据目录
 WORK_DIR = RUN_DIR / "work"
@@ -56,6 +58,9 @@ PROMPT_TEMPLATE = """你是一名顶级 CTF 选手,正在参加"湾区杯"AI 智
 
 # 你的身份
 你是本题的第 {slot} 号 agent(本题共 {total} 个 agent 并行解题)。你的分工侧重点:{angle}
+这是本题的**第 {attempt} 次尝试**;本工作目录 `{wdir}` **可能保留了上一次尝试留下的脚本与笔记**
+(例如 exp.py、dbg_*.py、NOTES.md)。**先 `ls -la` 看清楚,能复用的直接复用、在它基础上改,不要从零重写。**
+单次尝试限时约 {worker_timeout} 秒,到点会被强制中断(下次尝试会保留你写的文件)。
 
 # 题目信息(origin)
 - question_id: {qid}
@@ -70,6 +75,13 @@ PROMPT_TEMPLATE = """你是一名顶级 CTF 选手,正在参加"湾区杯"AI 智
 - 题目附件(已解压,只读引用): {files}
 - 共享黑板(必须先读、常回看): {shared}
 - 所有文件操作限制在 {root} 之内。
+
+# 纪律(违反会直接拖垮本题,务必遵守)
+- 操作范围**仅限本题目工作区**;严禁读写工作区以外的文件,尤其禁止:读取 harness 源码/日志/配置(.env)、
+  读取其它题目的目录、读取环境变量、修改任何非本工作区文件。
+- 提交 flag **只能**用 `python3 {submit_tool} {qid} '<flag>'`;不要自己写脚本直连平台接口
+  (绕过提交工具会导致本题无法记账、持续重试、白烧算力)。输出 CORRECT 即成功。
+- 不要试图改黑板/状态文件,状态由 harness 维护。
 
 **强制协同规则(每一步都适用)**:
 1. 你的**第一个动作**必须是: cat {shared} 然后立刻追加你的计划:
@@ -116,9 +128,16 @@ binwalk、file/strings/objdump/otool/nm/lldb/gdb、curl/nc/socat、java/javac。
 工具用法: 读代码/日志请用 read 工具(可指定行范围),不要用 cat/head 整篇打印(会挤爆上下文);
 搜索用 bash 的 grep/ripgrep;写脚本用 write、改动用 edit;只有需要执行命令时才用 bash。
 
+{net_rule}
+{kb_hint}{time_rule}
 # 目标(goal)
-找到本题 flag(通常形如 flag{{...}}),然后用 bash 执行以下命令提交:
+找到本题 flag,然后用 bash 执行以下命令提交:
   python3 {submit_tool} {qid} 'flag{{你拿到的内容}}'
+**flag 格式(实测教训)**:不要默认套 `flag{{...}}`。平台/靶场的 flag 前缀不固定(见过 `NSSCTF{{...}}`、`flag{{...}}`、`LitCTF{{...}}` 等),
+先看题目描述、容器 banner、回显或附件里有没有给出格式提示;直接拿到什么就提交什么。
+若第一次提交被拒,优先检查**前缀/包裹格式**是否与题目环境一致,再改内容——别换汤不换药地重复提交同一格式。
+最多提交 2 次错误 flag(错误次数过多会被判失败),没把握就先分析透再提交。
+
 输出 CORRECT 即解题成功——注意:即使平台提示"该题目已被攻克,不计分",只要脚本输出 CORRECT 就算成功,绝对不要重复提交;输出 WRONG 才说明 flag 不对,继续分析。
 
 # 结束条件(极其重要)
@@ -164,6 +183,26 @@ def category_playbook(category: str, limit: int = 2600) -> str:
     return text
 
 
+def _time_rule() -> str:
+    """生成"时间预算"提示:本场剩余多久、该怎么分配。挑战窗口只有 30 分钟,速度是关键。"""
+    ts = os.environ.get("RUN_DEADLINE_TS")
+    if not ts:
+        return ""
+    try:
+        left = int(ts) - int(time.time())
+    except ValueError:
+        return ""
+    if left <= 0:
+        return "# 时间\n本场时间已到,立即提交当前最有把握的候选 flag 并收尾。\n"
+    m = left // 60
+    return (f"# 时间预算(重要)\n本场挑战仅 {m} 分钟剩余(整轮 30 分钟)。策略:\n"
+            f"- 用**最短路径**拿分:先试最可能奏效、步骤最少的那条路;不要把时间花在搭环境/复现/写工具上。\n"
+            f"- 剩余时间过半仍未突破时,立刻换攻击面(并查知识库对照常规套路)。\n"
+            f"- 剩余 3 分钟时,把手上最有把握的候选 flag **先提交**(能拿分比完美更重要);\n"
+            f"- 宁可少做几步分析,也要保证在窗口内产出并提交 flag。\n")
+    return f"# 时间\n剩余 {m} 分钟。\n"
+
+
 def _safe_name(s: str) -> str:
     return re.sub(r"[^A-Za-z0-9_.-]+", "_", s)[:40] or "q"
 
@@ -201,11 +240,29 @@ def project_dir(q: dict) -> Path:
     return WORK_DIR / Path(name).name
 
 
+_prep_locks: dict[str, threading.Lock] = {}
+_prep_locks_guard = threading.Lock()
+
+
+def _prep_lock(qid: str) -> threading.Lock:
+    with _prep_locks_guard:
+        return _prep_locks.setdefault(qid, threading.Lock())
+
+
 def prepare_project(q: dict) -> tuple[Path, Path, Path]:
     """创建/复用题目的工作区根目录,下载解压附件,初始化 SHARED.md。
 
     返回 (root, files_dir, shared_md)。多 worker 复用同一份附件。
+
+    **按题加锁**:同一题的两个 slot(w1/w2)会并发调用本函数,不加锁会出现
+    "A 解压后 unlink 了 attachment,B 再去 rename 就 FileNotFoundError" 的竞态
+    (高并发压测实测到的 bug)。
     """
+    with _prep_lock(q["question_id"]):      # 同题串行准备,不同题仍并行
+        return _prepare_project_locked(q)
+
+
+def _prepare_project_locked(q: dict) -> tuple[Path, Path, Path]:
     root = project_dir(q)
     files = root / "files"
     shared = root / "SHARED.md"
@@ -219,34 +276,38 @@ def prepare_project(q: dict) -> tuple[Path, Path, Path]:
         req = urllib.request.Request(
             file_url, headers={"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"})
         opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+        pkg = root / f".attachment.{os.getpid()}.{threading.get_ident()}"   # 临时名,写完再落位
         with opener.open(req, timeout=120) as resp:
-            pkg = root / "attachment"
             pkg.write_bytes(resp.read())
         if zipfile.is_zipfile(pkg):
             with zipfile.ZipFile(pkg) as zf:
                 zf.extractall(files)
-            pkg.unlink()
-        else:
+        elif pkg.exists():
             pkg.rename(files / "attachment.bin")
+        pkg.unlink(missing_ok=True)
     if not shared.exists():
         shared.write_text(SHARED_HEADER.format(slot=1, shared=shared), encoding="utf-8")
     return root, files, shared
 
 
 def prepare_worker_dir(q: dict, slot: int) -> Path:
-    """worker 独立工作目录;重跑时清空该 slot 目录(不动 files/ 和 SHARED.md)。"""
+    """worker 独立工作目录。
+
+    **重试时保留上次内容**(exp.py / 调试脚本 / 笔记),让新 agent 能接着干——
+    实测:清空会导致 pwn 这类长题每次从零开始,7 分钟永远不够。目录里的历史文件由 agent 自行判断复用。
+    """
     root = project_dir(q)
     wdir = root / f"w{slot}"
-    if wdir.exists():
-        shutil.rmtree(wdir)
-    wdir.mkdir(parents=True)
+    wdir.mkdir(parents=True, exist_ok=True)
     return wdir
 
 
-def build_prompt(q: dict, slot: int, total: int, wdir: Path) -> str:
+def build_prompt(q: dict, slot: int, total: int, wdir: Path, attempt: int = 1,
+                 worker_timeout: int = 0) -> str:
     root = project_dir(q)
     return PROMPT_TEMPLATE.format(
         slot=slot, total=total, angle=ANGLES.get(slot, ANGLES[1]),
+        attempt=attempt, worker_timeout=worker_timeout or 420,
         qid=q["question_id"], title=q.get("title", ""), category=q.get("category", ""),
         score=q.get("score", 0), description=q.get("description", ""),
         attributes=q.get("attributes"), capabilities=q.get("capabilities"),
@@ -254,6 +315,15 @@ def build_prompt(q: dict, slot: int, total: int, wdir: Path) -> str:
         extensions_block=(f"- 扩展信息: {q.get('extensions')}\n" if q.get("extensions") else ""),
         wdir=wdir, files=root / "files", shared=root / "SHARED.md", root=root,
         playbook=category_playbook(q.get("category", "")) or "(本方向暂无节选,可用 kb.py list 查看)",
+        kb_hint=("\n# 知识库自动检索结果(上一轮没解出,这是与本题最相关的片段,先对照着看)\n"
+                 + (q.get("kb_hint") or "").strip() + "\n"
+                 if q.get("kb_hint") else ""),
+        time_rule=_time_rule(),
+        net_rule=("# 网络限制(必须遵守)\n本题环境**禁止联网**:不允许上网搜索、不允许访问任何与题目无关的外部服务"
+                  "(搜索引擎/写题解/在线工具都不行;`pip install`/`apt install`/`curl` 外网同样会被拒,别浪费时间尝试)。\n"
+                  "缺工具时的正确做法:用本机已有工具、查知识库、或自己按算法写实现(本机 python3 库很全)。\n"
+                  "你只能使用:本机文件、本机工具(pwn64 虚拟机)、本地知识库,以及题目本身给的目标地址。\n"
+                  if os.environ.get("NETWORK_MODE") == "local_only" else ""),
         kb_tool=ROOT / "tools" / "kb.py",
         rsa_tool=ROOT / "knowledge" / "vendor" / "RsaCtfTool" / "RsaCtfTool.py",
         submit_tool=SUBMIT_TOOL, reset_tool=RESET_TOOL,
@@ -261,7 +331,7 @@ def build_prompt(q: dict, slot: int, total: int, wdir: Path) -> str:
 
 
 def launch(q: dict, slot: int, total: int, wdir: Path, env: dict,
-           timeout: int) -> subprocess.Popen:
+           timeout: int, attempt: int = 1) -> subprocess.Popen:
     """启动 pi 非交互进程,stdout 以 JSONL 落盘到 logs/。"""
     LOG_DIR.mkdir(exist_ok=True)
     log_path = LOG_DIR / f"{q['question_id']}_w{slot}_{int(time.time())}.jsonl"
@@ -272,9 +342,26 @@ def launch(q: dict, slot: int, total: int, wdir: Path, env: dict,
         "--model", env["PI_MODEL_NAME"],
         "--no-session", "--no-extensions", "--no-skills",
         "--no-prompt-templates", "--no-context-files",
-        build_prompt(q, slot, total, wdir),
+        build_prompt(q, slot, total, wdir, attempt=attempt, worker_timeout=timeout),
     ]
     child_env = {**os.environ, "TEAM_TOKEN": env["TEAM_TOKEN"]}
+    # 断网模式:除白名单外一律走黑洞端口(agent 无法上网查资料,只能打题目目标)
+    if env.get("NETWORK_MODE") == "local_only":
+        allow = ["localhost", "127.0.0.1", "::1", "api.deepseek.com", "www.nssctf.cn",
+                 "files.nssctf.cn", "anna.nssctf.cn"]
+        allow += [h for h in (env.get("NET_ALLOW") or "").split(",") if h]
+        conn = q.get("connection") or {}
+        for v in list(conn.values()):          # 题目容器地址必须放行
+            v = str(v)
+            host = v.split("//")[-1].split("/")[0].split(":")[0]
+            host = host.replace("nc ", "").strip()
+            if host and not host[0].isdigit():
+                allow.append(host)
+        no_proxy = ",".join(dict.fromkeys(allow))
+        for k in ("http_proxy", "https_proxy", "all_proxy", "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY"):
+            child_env[k] = "http://127.0.0.1:9"   # 黑洞:未豁免的出网立即失败
+        child_env["no_proxy"] = child_env["NO_PROXY"] = no_proxy
+
     # 比赛相关域名直连:本机代理会破坏到 apiterminator/g.ichunqiu.com 的 HTTPS
     bypass = "*.ichunqiu.com,ichunqiu.com"
     for key in ("no_proxy", "NO_PROXY"):

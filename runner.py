@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 import argparse
+import datetime
 import json
 import os
 import signal
@@ -30,7 +31,10 @@ RUN_DIR = Path(os.environ.get("WQH_RUN_DIR") or ROOT)
 sys.path.insert(0, str(ROOT))
 
 import board as board_mod  # noqa: E402
-import contest_api  # noqa: E402
+if os.environ.get("CONTEST_ADAPTER", "").lower() == "arena":
+    import arena_api as contest_api  # 靶场模式:NSSCTF Agent Arena(接口同名同签名)
+else:
+    import contest_api  # noqa: E402
 import solver  # noqa: E402
 
 
@@ -46,15 +50,21 @@ START_WORKERS = _int("START_WORKERS", 6)          # 起始并发(高并发抢跑
 MIN_WORKERS = _int("MIN_WORKERS", 1)              # 并发下限(降到这里为止)
 WORKERS_PER_QUESTION = _int("WORKERS_PER_QUESTION", 2)  # 同题最多几个 agent
 WORKER_TIMEOUT = _int("WORKER_TIMEOUT", 1500)
-MAX_ATTEMPTS = _int("MAX_ATTEMPTS", 6)            # 单题总尝试次数
+MAX_ATTEMPTS = _int("MAX_ATTEMPTS", 0)            # 单题总尝试次数;0=不限(以窗口时间为界)
 REDUCE_COOLDOWN = _int("REDUCE_COOLDOWN", 60)     # 两次降并发之间的冷却(秒)
 FAILED_RETRY_AFTER = _int("FAILED_RETRY_AFTER", 600)  # 放弃的题多久后重新拾起(0=不重拾)
 QUOTA_BACKOFF = _int("QUOTA_BACKOFF", 900)        # 额度耗尽后的暂停时长(秒)
 KEEP_RUNNING = os.environ.get("KEEP_RUNNING", "1") == "1"
 API_RETRY_DELAY = 10
+ROUND_WINDOW_MINUTES = _int("ROUND_WINDOW_MINUTES", 0)   # 挑战窗口总时长(分钟);0=不限
+ROUND_END_AT = os.environ.get("ROUND_END_AT", "").strip()   # 绝对结束时间(本地时区 HH:MM),优先级高于时长
+STOP_SPAWN_BEFORE_END = _int("STOP_SPAWN_BEFORE_END", 120)  # 结束前多少秒停止派新题
+QUICK_RETRY_DELAY = _int("QUICK_RETRY_DELAY", 5)            # 秒退后的重试间隔(要"坏了立刻重试",所以很短)
 KB_NUDGE_STEPS = _int("KB_NUDGE_STEPS", 12)  # 超过这么多步没提交就提醒 agent 去查知识库(0=关闭)
 MAX_LOG_MB = _int("MAX_LOG_MB", 0)         # worker 日志总量上限(MB);0=不清理(审计需要完整轨迹)
 PREP_TIMEOUT = _int("PREP_TIMEOUT", 300)   # 工作区准备(下载解压)超时,超时释放槽位
+TIMEOUT_ESCALATE = _int("TIMEOUT_ESCALATE", 120)  # 每次重试给 worker 增加的单题限时(秒)
+MAX_WORKER_TIMEOUT = _int("MAX_WORKER_TIMEOUT", 900)  # 单题单 worker 限时上限(秒)
 
 _prep_pool = ThreadPoolExecutor(max_workers=4)  # 附件下载/解压并行化,避免阻塞主循环
 _prepping: dict[tuple[str, int], tuple] = {}    # (qid, slot) -> (future, entry, slot, total, started)
@@ -79,9 +89,11 @@ class Concurrency:
         now = time.time()
         if now - self.last_reduce < self.cooldown or self.limit <= self.floor:
             return False
-        self.limit -= 1
+        # 高并发时按 20% 退(否则从 24 退到安全值要 20 分钟,一场 30 分钟根本来不及)
+        step = max(1, self.limit // 5) if self.limit >= 10 else 1
+        self.limit = max(self.floor, self.limit - step)
         self.last_reduce = now
-        log(f"检测到模型侧限制({reason}),并发上限降至 {self.limit}")
+        log(f"检测到模型侧限制({reason}),并发上限降至 {self.limit}(本步 -{step})")
         with board_mod.locked() as b:
             board_mod.add_fact(b, "runner", f"限流({reason}),并发降至 {self.limit}")
         return True
@@ -105,6 +117,61 @@ class Concurrency:
 workers: dict[str, dict] = {}
 concurrency = Concurrency(START_WORKERS, MIN_WORKERS, REDUCE_COOLDOWN)
 idle_logged = False
+RUN_STARTED = time.time()
+DEADLINE_FILE = RUN_DIR / "logs" / "run_deadline.json"
+
+
+def _resolve_deadline() -> float:
+    """确定本轮截止时间(epoch);0 表示不限时。
+
+    优先级:ROUND_END_AT(绝对时间,如 14:00)> ROUND_WINDOW_MINUTES(从启动算起的时长)。
+    **截止时间会持久化到数据目录**:runner 崩溃/被重启(supervise、控制台「重启」)后沿用同一个
+    截止点,不会因为重启而重新计时(否则重启一次就多跑一轮的时间)。
+    """
+    if DEADLINE_FILE.exists():
+        try:
+            saved = json.loads(DEADLINE_FILE.read_text(encoding="utf-8"))
+            dl = float(saved.get("deadline") or 0)
+            # 只在"同一轮尚未结束"时沿用:重启(supervise/控制台)不能重置计时;
+            # 但已过期的 deadline 说明上一轮早已结束 → 视为新一轮,重新计时(否则第二天起来会不干活)
+            if dl > time.time():
+                return dl
+        except Exception:
+            pass
+    dl = 0.0
+    if ROUND_END_AT:
+        try:
+            hh, mm = (int(x) for x in ROUND_END_AT.split(":")[:2])
+            now = datetime.datetime.now()
+            end = now.replace(hour=hh, minute=mm, second=0, microsecond=0)
+            if end <= now:                       # 已过点则视为明天该时刻
+                end += datetime.timedelta(days=1)
+            dl = end.timestamp()
+        except Exception as e:
+            log(f"ROUND_END_AT 解析失败({ROUND_END_AT}): {e},回退到 ROUND_WINDOW_MINUTES")
+    if not dl and ROUND_WINDOW_MINUTES:
+        dl = RUN_STARTED + ROUND_WINDOW_MINUTES * 60
+    if dl:
+        try:
+            DEADLINE_FILE.parent.mkdir(parents=True, exist_ok=True)
+            DEADLINE_FILE.write_text(json.dumps({"deadline": dl, "set_at": RUN_STARTED}),
+                                     encoding="utf-8")
+        except OSError:
+            pass
+    return dl
+
+
+RUN_DEADLINE = _resolve_deadline()
+
+
+def time_left() -> int:
+    """本场剩余秒数;未设窗口返回 -1。"""
+    return int(RUN_DEADLINE - time.time()) if RUN_DEADLINE else -1
+
+
+def window_closing() -> bool:
+    """是否已到"不再派新题"的时间点。"""
+    return bool(RUN_DEADLINE) and time_left() <= STOP_SPAWN_BEFORE_END
 
 
 def log(msg: str) -> None:
@@ -235,6 +302,22 @@ def reconcile(env: dict) -> list[dict]:
         for q in questions:
             if q.get("is_solved"):
                 kill_question(q["question_id"], "solved")
+
+    # 靶场模式:attempt 一旦结束(解出/失败/超时)就不再出现在 current/ 里。
+    # 黑板里还挂着 running/pending 的旧题必须收尾,否则 worker 会对着已失效的 attempt 空转。
+    if os.environ.get("CONTEST_ADAPTER", "").lower() == "arena":
+        alive = {q["question_id"] for q in questions}
+        stale = []
+        with board_mod.locked() as b:
+            for qid, e in b["questions"].items():
+                if qid not in alive and e["status"] in (board_mod.STATUS_RUNNING, board_mod.STATUS_PENDING):
+                    e["status"] = board_mod.STATUS_FAILED
+                    e["finished_at"] = time.time()
+                    board_mod.add_fact(b, "runner", f"{e.get('title', qid)} attempt 已结束(未提交),标记失败")
+                    stale.append(qid)
+        for qid in stale:
+            kill_question(qid, "attempt 已结束")
+            log(f"attempt 已结束,收尾旧题:{qid}")
     return questions
 
 
@@ -327,7 +410,7 @@ def kill_submitted_workers() -> None:
 def inspect_failure(w: dict) -> str:
     """判断 worker 退出的原因:timeout / rate_limit / quota / exit=N。"""
     proc = w["proc"]
-    if proc.poll() is None and time.time() - w["started"] > WORKER_TIMEOUT:
+    if proc.poll() is None and time.time() - w["started"] > w.get("timeout", WORKER_TIMEOUT):
         return "timeout"
     return solver.classify_failure(proc._wqh_log_path) or f"exit={proc.poll()}"
 
@@ -336,7 +419,7 @@ def reap() -> None:
     """回收已退出的 worker。模型侧限制导致的退出不消耗重试次数;额度耗尽整体暂停。"""
     for key, w in list(workers.items()):
         proc = w["proc"]
-        due_timeout = proc.poll() is None and time.time() - w["started"] > WORKER_TIMEOUT
+        due_timeout = proc.poll() is None and time.time() - w["started"] > w.get("timeout", WORKER_TIMEOUT)
         if proc.poll() is None and not due_timeout:
             continue
         reason = inspect_failure(w)
@@ -363,10 +446,11 @@ def reap() -> None:
                 board_mod.add_fact(b, "runner", f"{entry['title']} 模型侧限制({reason}),退避重试")
                 continue
             runtime = time.time() - w["started"]
-            if entry["attempts"] < entry["max_attempts"]:
+            unlimited = entry.get("max_attempts", 0) <= 0 or MAX_ATTEMPTS <= 0
+            if unlimited or entry["attempts"] < entry["max_attempts"]:
                 entry["status"] = board_mod.STATUS_PENDING
-                entry["next_retry_at"] = time.time() + (30 if runtime < 30 else 0)
-                board_mod.add_fact(b, "runner", f"{entry['title']} {reason},待重试")
+                entry["next_retry_at"] = time.time() + (QUICK_RETRY_DELAY if runtime < 30 else 0)
+                board_mod.add_fact(b, "runner", f"{entry['title']} {reason},待重试(窗口内不限次数)")
             else:
                 entry["status"] = board_mod.STATUS_FAILED
                 entry["finished_at"] = time.time()
@@ -390,6 +474,11 @@ def revive_failed() -> None:
 
 def spawn(env: dict) -> None:
     """按当前并发上限派题:先铺满不同题目,再考虑同题加派 agent。"""
+    if window_closing():
+        if not getattr(spawn, "_closing_logged", False):
+            log(f"窗口剩余 {time_left()}s,停止派发新题(已有 worker 继续跑完)")
+            spawn._closing_logged = True  # type: ignore[attr-defined]
+        return
     if concurrency.paused:
         now = time.time()
         if not concurrency._pause_logged and now % 60 < POLL_INTERVAL:
@@ -405,7 +494,7 @@ def spawn(env: dict) -> None:
         entries = [
             dict(e) for e in b["questions"].values()
             if not e["is_solved"] and e["status"] in (board_mod.STATUS_PENDING, board_mod.STATUS_RUNNING)
-            and e["attempts"] < e["max_attempts"]
+            and (e.get("max_attempts", 0) <= 0 or e["attempts"] < e["max_attempts"])
             and now >= e.get("next_retry_at", 0)
         ]
         # 未启动过的题优先,其次尝试次数少的题
@@ -462,6 +551,49 @@ def spawn(env: dict) -> None:
         _prepping[(qid, slot)] = (fut, e, slot, total, time.time())
 
 
+_kb_hint_cache: dict[str, str] = {}
+
+
+def kb_hint_for(q: dict) -> str:
+    """自动检索知识库并把最相关片段交给 agent。
+
+    只在**重试(第 2 次及以后)**时做:首轮先让它自己干(简单题自己就会),
+    卡住时由 harness 主动把资料推到它面前,而不是指望它想起来去查。
+    """
+    if os.environ.get("KB_AUTO_SEARCH", "1") != "1":
+        return ""
+    qid = q.get("question_id", "")
+    if qid in _kb_hint_cache:
+        return _kb_hint_cache[qid]
+    kw = " ".join(x for x in (q.get("category", ""), q.get("title", ""),
+                              (q.get("description") or "")[:60]) if x)
+    hint = ""
+    try:
+        r = subprocess.run([sys.executable, str(ROOT / "tools" / "kb.py"), "search", kw, "--limit", "3"],
+                           capture_output=True, text=True, timeout=25, cwd=ROOT)
+        out = (r.stdout or "").strip()
+        if out and "未找到" not in out:
+            hint = out[:1400]
+    except Exception as e:
+        log(f"知识库自动检索失败({type(e).__name__}),跳过注入")
+    _kb_hint_cache[qid] = hint
+    if hint:
+        with board_mod.locked() as b:
+            board_mod.add_fact(b, "runner", f"为 {q.get('title', qid)} 自动注入知识库片段 {len(hint)} 字")
+        log(f"已为 {q.get('title', qid)} 自动注入知识库片段({len(hint)} 字)")
+    return hint
+
+
+def worker_timeout_for(attempts: int) -> int:
+    """单题限时随尝试次数递增:第 1 次 WORKER_TIMEOUT,之后每次 +TIMEOUT_ESCALATE。
+
+    理由:简单题首轮 7 分钟足够;难题被超时打断后,后续轮次应给更多时间,
+    否则永远卡在同一处(实测 pwn 四次都在 7 分钟处被砍)。
+    """
+    t = WORKER_TIMEOUT + max(0, attempts - 1) * TIMEOUT_ESCALATE
+    return min(t, MAX_WORKER_TIMEOUT) if MAX_WORKER_TIMEOUT > 0 else t
+
+
 def _prepare_workspace(e: dict, slot: int):
     solver.prepare_project(e)
     return solver.prepare_worker_dir(e, slot)
@@ -484,15 +616,22 @@ def launch_prepared(env: dict) -> None:
         try:
             wdir = fut.result()
         except Exception as ex:
-            log(f"工作区准备失败 {qid}: {ex}")
+            log(f"工作区准备失败 {qid}: {type(ex).__name__}: {ex}")
             with board_mod.locked() as b:
                 entry = b["questions"].get(qid)
                 if entry and entry["status"] != board_mod.STATUS_SOLVED:
                     entry["status"] = board_mod.STATUS_PENDING  # 未启动,不消耗尝试次数
                     entry["next_retry_at"] = time.time() + 30
             continue
+        # 用黑板里的**实时**计数,别用 spawn 时的旧快照(否则次数与注入判断都不准)
+        with board_mod.locked() as b:
+            prev_attempts = int((b["questions"].get(qid) or {}).get("attempts", 0) or 0)
+        this_attempt = prev_attempts + 1
+        tm = worker_timeout_for(this_attempt)
+        if prev_attempts >= 1:                 # 之前已经试过没成 → 主动把知识库资料推给它
+            e["kb_hint"] = kb_hint_for(e)
         try:
-            proc = solver.launch(e, slot, total, wdir, env, WORKER_TIMEOUT)
+            proc = solver.launch(e, slot, total, wdir, env, tm, attempt=this_attempt)
         except Exception as ex:
             log(f"启动失败 {qid} w{slot}: {ex}")
             with board_mod.locked() as b:
@@ -504,10 +643,11 @@ def launch_prepared(env: dict) -> None:
         with board_mod.locked() as b:
             entry = b["questions"].get(qid)
             if entry:
-                entry["attempts"] = min(entry["attempts"] + 1, entry["max_attempts"])  # 真正启动才计数
+                entry["attempts"] += 1        # 真正启动才计数;不限次数时不设上限
                 entry["worker_pid"] = proc.pid
         workers[f"{qid}#{slot}"] = {
             "proc": proc, "qid": qid, "slot": slot, "started": time.time(),
+            "timeout": tm,
         }
         register_pid(proc.pid)
         log(f"启动 worker: {e['title']} [{e['category']}] w{slot} pid={proc.pid} "
@@ -547,8 +687,15 @@ RUNNER_STATE = LOGS / "runner_state.json"
 
 def write_runner_state() -> None:
     """给看板用的运行态:当前并发上限、是否因额度暂停。"""
+    logs_mb = 0
+    try:
+        logs_mb = sum(f.stat().st_size for f in LOGS.glob("*.jsonl")) // 1_000_000
+    except OSError:
+        pass
     data = {"limit": concurrency.limit, "paused": concurrency.paused,
             "pause_until": concurrency.pause_until, "running": len(workers),
+            "heartbeat": time.time(), "loop": getattr(write_runner_state, "_loop", 0),
+            "logs_mb": logs_mb, "deadline": RUN_DEADLINE, "time_left": time_left(),
             "ts": time.time()}
     try:
         tmp = RUNNER_STATE.with_suffix(".tmp")
@@ -566,7 +713,9 @@ def print_status() -> None:
         return
     solved = sum(1 for q in qs if q["status"] == board_mod.STATUS_SOLVED)
     line = " | ".join(f"{q['title']}:{q['status']}" for q in qs)
-    log(f"进度 {solved}/{len(qs)} | 并发 {len(workers)}/{concurrency.limit} | {line}")
+    left = time_left()
+    tleft = f" | 剩余 {left//60}分{left%60:02d}秒" if left >= 0 else ""
+    log(f"进度 {solved}/{len(qs)} | 并发 {len(workers)}/{concurrency.limit}{tleft} | {line}")
 
 
 RUNNER_PID_FILE = RUN_DIR / "logs" / "runner.pid"
@@ -579,6 +728,8 @@ def _graceful_signal(*_) -> None:
 
 def main() -> None:
     global idle_logged
+    RUN_DIR.mkdir(parents=True, exist_ok=True)   # 先建数据目录,任何入口都不会因缺目录崩
+    LOGS.mkdir(parents=True, exist_ok=True)
     ap = argparse.ArgumentParser()
     ap.add_argument("--once", action="store_true", help="只拉取一次题目并打印,不启动 worker")
     args = ap.parse_args()
@@ -625,8 +776,16 @@ def main() -> None:
             revive_failed()
             spawn(env)
             launch_prepared(env)
-            if loop % 12 == 1:  # 每约 1 分钟清理一次日志
-                prune_logs()
+            write_runner_state._loop = loop  # type: ignore[attr-defined]
+            if loop % 60 == 1:  # 每约 3 分钟报告一次日志体积(审计需要完整日志,默认不清理)
+                with board_mod.locked() as b:
+                    pass
+                try:
+                    mb = sum(f.stat().st_size for f in LOGS.glob("*.jsonl")) // 1_000_000
+                    if mb > 2000:
+                        log(f"⚠ 日志已 {mb}MB(审计需要完整轨迹,未自动清理);磁盘紧张时手动归档:python3 tools/export_trace.py")
+                except OSError:
+                    pass
             write_runner_state()
             print_status()
             if loop == 1 and len(questions) > concurrency.limit * 2:
@@ -644,6 +803,11 @@ def main() -> None:
             except Exception as e:
                 log(f"查题接口异常({e}),{API_RETRY_DELAY}s 后重试")
                 time.sleep(API_RETRY_DELAY)
+            if RUN_DEADLINE and time.time() >= RUN_DEADLINE:
+                log(f"挑战窗口结束({ROUND_WINDOW_MINUTES} 分钟),停止所有 worker。")
+                for key in list(workers):
+                    kill_worker(key, "窗口结束")
+                break
             with board_mod.locked() as b:
                 qs = list(b["questions"].values())
             all_done = qs and all(

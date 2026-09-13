@@ -47,3 +47,7 @@ orb -m pwn64 bash -lc 'gdb -q ./chall -ex "run < in.txt" -ex "bt" -ex "info regi
 
 ## 5. 收尾(省轮次)
 拿到 shell 后一次性全打:`id; ls -la; cat flag* /flag /flag.txt 2>/dev/null; env | grep -i flag`。
+
+## flag 格式(实测踩过)
+前缀**不固定**,见过 `NSSCTF{...}`、`flag{...}`、`LitCTF{...}` 等。提交前先看题目描述/容器 banner/回显/附件里有没有格式提示。
+若第一次被拒,**优先检查前缀**再改内容;同一格式别重复提交(错误次数多会被判失败,靶场上限 20 次)。

@@ -35,6 +35,7 @@ IGNORE_SOLVED = os.environ.get("IGNORE_SOLVED", "0") == "1"
 @contextlib.contextmanager
 def locked():
     """持有黑板锁,进入时读盘,退出时写盘。用法: with locked() as board: ..."""
+    RUN_DIR.mkdir(parents=True, exist_ok=True)   # 数据目录可能还没建(换项目/靶场首跑)
     LOCK_PATH.touch(exist_ok=True)
     with open(LOCK_PATH, "r+") as lf:
         fcntl.flock(lf, fcntl.LOCK_EX)
@@ -69,7 +70,7 @@ def upsert_question(board: dict, q: dict) -> dict:
             "question_id": qid,
             "status": STATUS_PENDING,
             "attempts": 0,
-            "max_attempts": int(os.environ.get("MAX_ATTEMPTS", "6")),
+            "max_attempts": int(os.environ.get("MAX_ATTEMPTS", "0")),   # 0 = 不限次数
             "next_retry_at": 0,
             "worker_pid": None,
             "started_at": None,

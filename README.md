@@ -1,7 +1,45 @@
 # wqh_fromkimi —— 湾区杯 AI 智能体解题赛 自动解题框架
 
+> **架构与运行逻辑详解(含架构图 / 时序图 / 状态机):[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**
+
 参考 Cairn 的架构思想(黑板 + 隔离 worker + origin/goal 任务),为 iChunQiu
-比赛接口定制的轻量实现。本机 `pi` CLI 作为解题 worker,模型走 Kimi for Coding。
+比赛接口定制的轻量实现。本机 `pi` CLI 作为解题 worker,模型当前配置为 **deepseek-flash**(`https://api.deepseek.com/v1`)。
+
+## 最终版启动方式(比赛当天照这个做)
+
+```bash
+./start.sh                 # 一键:体检 → 起控制台 → 后台开跑(默认开启崩溃自动重启)
+```
+或者**双击 `启动Agent.command`**(等价,并自动打开浏览器)。
+
+跑完打印本轮截止时间,例如:`本轮截止 22:00:34(剩余 59 分 56 秒);期间坏了会自动重试,不限次数,到点自动收工`。
+
+| 命令 | 作用 |
+|---|---|
+| `./start.sh` | 一键启动(体检/控制台/开跑,默认 `--supervise` 崩溃自动重启) |
+| `./start.sh --check-only` | 只体检,不启动 |
+| `./start.sh status` / `./start.sh stop` | 看状态 / 优雅停机(连 supervisor 与所有 agent 一起收) |
+| `./start.sh --practice` | 练习模式(平台已解出的题也重跑) |
+| `./start.sh --project X` / `--workers N` | 指定项目 / 覆盖并发 |
+| `./start.sh --no-supervise` | 关闭崩溃自动重启 |
+
+**当前模型配置**:`PI_BASE_URL=https://api.deepseek.com/v1`、`PI_MODEL=deepseek-flash`、`PI_API_TYPE=openai-completions`
+(现场若换模型,在网页控制台改这四项 → 保存 → 测试模型)。
+
+**本轮计时**:从点「开始跑」起算,`ROUND_WINDOW_MINUTES=60` 或用绝对时间 `ROUND_END_AT=14:00`;
+截止时间会持久化,**重启不重置**,但**已过期则视为新一轮重新计时**(所以隔天再启动不会卡住)。
+
+## 重试与时间边界(以时间为界,不设次数上限)
+
+- **从点「开始跑」起计时**,窗口内**无限重试**:worker 超时/崩溃/退出都立刻重排(秒退等 5 秒,正常退出立即重试),
+  不存在"重试 N 次就放弃"。
+- **到点收工**:`ROUND_WINDOW_MINUTES=60`(或直接填绝对时间 `ROUND_END_AT=14:00`),最后 2 分钟(`STOP_SPAWN_BEFORE_END`)
+  不再派新题,到点杀掉所有 worker 并退出 —— 之后的问题不再跟进。
+- **截止时间持久化**在数据目录(`logs/run_deadline.json`):runner 崩溃被 `--supervise` 拉起、或在控制台点「重启」,
+  都沿用同一个截止点,不会因为重启而重新计时。
+- **单题限时逐轮递增且有上限**:420 → 540 → 660 → 780 → 900s(`TIMEOUT_ESCALATE=120`,`MAX_WORKER_TIMEOUT=900`),
+  防止一道题吃掉整轮。
+- 模型侧限制不消耗重试(本来也没有次数上限):429 降并发退避,额度耗尽整体暂停 `QUOTA_BACKOFF`。
 
 ## 运行策略(全自动,一键后不碰电脑)
 
@@ -250,3 +288,48 @@ python3 tools/package_submission.py --zip            # 追加 .zip 格式
   但请先跑一次 `export_trace.py` 把轨迹落盘。
 - 打包会自动脱敏(密钥/token 换成占位符),只带 `.env.example`。
 
+## 知识库是怎么被真正用上的(实测数据 + 四层投喂)
+
+担心"知识库没人查等于没有",所以做了四层,越往后越不依赖模型自觉:
+
+1. **方向 playbook 直接注入 prompt**(每次下发都带该方向的方法/坑/提速要点)—— 常见题不用查就已拥有;
+2. **agent 自己检索**:`tools/kb.py search/show/grep`(8949 段索引 0.2s);
+3. **卡住时强制查**:prompt 行动准则第 7 条(连续 8~10 步无进展必须查库)+ runner 侧 Observer 往它必读的
+   `SHARED.md` 写提醒(协同规则是"先读后写",提醒必被看到);
+4. **重试时 harness 主动投喂**(2026-09-13 新增):同一题第 2 次尝试起,runner 自动用题目关键词
+   (`kb.py search "<类别> <标题> <描述>"`)检索并把 top 片段注入 prompt,标题注明"上一轮没解出,这是最相关的片段"。
+   实测:第 1 次尝试不注入(先自己干)、第 2 次注入 1149 字。
+
+**实测使用率**(统计真实运行日志里的 `kb.py` 调用):
+| 场景 | agent 会话数 | 查库次数 | 什么情况下查的 |
+|---|---|---|---|
+| NSSCTF 靶场(陌生题多) | 10 | **18** | Go FileServer 越界绕过、ASPack 加壳脱壳、unicorn 模拟脱壳 —— 都是 playbook 没覆盖的长尾 |
+| 本地压测(取证/pwn) | 8 | 0 | 因为该方向 playbook 已直接注入 prompt,不需要额外查 |
+
+结论:agent 在**遇到陌生题型时会主动查**,常见题则直接用注入的 playbook;现在再加上"重试自动投喂"兜底,
+知识库不再依赖模型想起来去查。压测里它们查过而库里没有的内容(Go 静态文件服务技巧、加壳脱壳流程)也已补进
+`knowledge/web.md` 和 `knowledge/reverse.md`。
+
+## 压测与回归(四套,都不依赖比赛平台)
+
+| 脚本 | 作用 | 是否耗模型额度 |
+|---|---|---|
+| `python3 tests/unit_test.py` | 28 项离线断言:挑战窗口、并发降级步长、靶场映射、提交判定、黑板状态机、prompt 组装 | 否 |
+| `python3 tests/scale_test.py 30` | 调度回归:广度优先、并发上限、无题饿死、尝试次数不泄漏(24/30/60/100 题) | 否 |
+| `./tests/local_contest.sh start` | 本地端到端:同构 mock 接口 + pwn 服务 + 真跑 agent(小规模) | 是 |
+| `./tests/load/run_load.sh 24` | **高并发压测**:14 道题 × 24 并发,带容量与耗时报表 | 是 |
+
+### 实测容量(2026-09-13,M3 Mac / DeepSeek Flash / 24 并发)
+- **12 道取证题全部解出,平均 90 秒(48~138s),每题只提交 1 次、0 次错误提交**;2 道 pwn 副本自动进入长时求解。
+- 峰值 **26 个 pi 进程 / 4.0GB 内存**,runner 自身 CPU <1% —— 瓶颈在模型与题本身,不在 harness。
+- 全程 **runner 异常 0 行**;加载 24 并发时 mock/查题接口无异常。
+
+## 运行期健壮性
+
+- **崩溃自动重启**:`./start.sh --supervise`(runner 异常退出等 5 秒重来;正常收工 exit 0 不再重启)。
+- **心跳监控**:runner 每轮写 `logs/runner_state.json` 的 `heartbeat`;看板在超过 60 秒无心跳时标红「runner 无响应」。
+- **窗口兜底**:到 `ROUND_WINDOW_MINUTES` 自动杀 worker 停派新题;最后 2 分钟不再接新题。
+- **孤儿清理**:启动时按进程名校验后清理上次残留的 pi 进程,防偷跑烧额度。
+- **审计日志不自动清理**(默认 `MAX_LOG_MB=0`),超过 2GB 会在日志里提示手动归档。
+- **目录自愈**:数据目录缺失时 `board.locked()` 与 runner 启动会自动创建。
+- **赛前体检**:`./start.sh --check-only` 逐项检查 python/pi/tshark/orb/知识库/磁盘/接口连通性。

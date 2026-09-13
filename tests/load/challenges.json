@@ -1,0 +1,148 @@
+[
+ {
+  "id": "LOADF00",
+  "title": "pcap-00",
+  "category": "forensics",
+  "score": 500,
+  "description": "流量分析:flag 被 SQL 注入外带,藏在 HTTP 响应里(压测副本)",
+  "flag": "flag{a0d78ce4-8072-4e14-939b-cd78392a34f4}",
+  "file": "sqldata.pcapng"
+ },
+ {
+  "id": "LOADF01",
+  "title": "pcap-01",
+  "category": "forensics",
+  "score": 500,
+  "description": "流量分析:flag 被 SQL 注入外带,藏在 HTTP 响应里(压测副本)",
+  "flag": "flag{a0d78ce4-8072-4e14-939b-cd78392a34f4}",
+  "file": "sqldata.pcapng"
+ },
+ {
+  "id": "LOADF02",
+  "title": "pcap-02",
+  "category": "forensics",
+  "score": 500,
+  "description": "流量分析:flag 被 SQL 注入外带,藏在 HTTP 响应里(压测副本)",
+  "flag": "flag{a0d78ce4-8072-4e14-939b-cd78392a34f4}",
+  "file": "sqldata.pcapng"
+ },
+ {
+  "id": "LOADF03",
+  "title": "pcap-03",
+  "category": "forensics",
+  "score": 500,
+  "description": "流量分析:flag 被 SQL 注入外带,藏在 HTTP 响应里(压测副本)",
+  "flag": "flag{a0d78ce4-8072-4e14-939b-cd78392a34f4}",
+  "file": "sqldata.pcapng"
+ },
+ {
+  "id": "LOADF04",
+  "title": "pcap-04",
+  "category": "forensics",
+  "score": 500,
+  "description": "流量分析:flag 被 SQL 注入外带,藏在 HTTP 响应里(压测副本)",
+  "flag": "flag{a0d78ce4-8072-4e14-939b-cd78392a34f4}",
+  "file": "sqldata.pcapng"
+ },
+ {
+  "id": "LOADF05",
+  "title": "pcap-05",
+  "category": "forensics",
+  "score": 500,
+  "description": "流量分析:flag 被 SQL 注入外带,藏在 HTTP 响应里(压测副本)",
+  "flag": "flag{a0d78ce4-8072-4e14-939b-cd78392a34f4}",
+  "file": "sqldata.pcapng"
+ },
+ {
+  "id": "LOADF06",
+  "title": "pcap-06",
+  "category": "forensics",
+  "score": 500,
+  "description": "流量分析:flag 被 SQL 注入外带,藏在 HTTP 响应里(压测副本)",
+  "flag": "flag{a0d78ce4-8072-4e14-939b-cd78392a34f4}",
+  "file": "sqldata.pcapng"
+ },
+ {
+  "id": "LOADF07",
+  "title": "pcap-07",
+  "category": "forensics",
+  "score": 500,
+  "description": "流量分析:flag 被 SQL 注入外带,藏在 HTTP 响应里(压测副本)",
+  "flag": "flag{a0d78ce4-8072-4e14-939b-cd78392a34f4}",
+  "file": "sqldata.pcapng"
+ },
+ {
+  "id": "LOADF08",
+  "title": "pcap-08",
+  "category": "forensics",
+  "score": 500,
+  "description": "流量分析:flag 被 SQL 注入外带,藏在 HTTP 响应里(压测副本)",
+  "flag": "flag{a0d78ce4-8072-4e14-939b-cd78392a34f4}",
+  "file": "sqldata.pcapng"
+ },
+ {
+  "id": "LOADF09",
+  "title": "pcap-09",
+  "category": "forensics",
+  "score": 500,
+  "description": "流量分析:flag 被 SQL 注入外带,藏在 HTTP 响应里(压测副本)",
+  "flag": "flag{a0d78ce4-8072-4e14-939b-cd78392a34f4}",
+  "file": "sqldata.pcapng"
+ },
+ {
+  "id": "LOADF10",
+  "title": "pcap-10",
+  "category": "forensics",
+  "score": 500,
+  "description": "流量分析:flag 被 SQL 注入外带,藏在 HTTP 响应里(压测副本)",
+  "flag": "flag{a0d78ce4-8072-4e14-939b-cd78392a34f4}",
+  "file": "sqldata.pcapng"
+ },
+ {
+  "id": "LOADF11",
+  "title": "pcap-11",
+  "category": "forensics",
+  "score": 500,
+  "description": "流量分析:flag 被 SQL 注入外带,藏在 HTTP 响应里(压测副本)",
+  "flag": "flag{a0d78ce4-8072-4e14-939b-cd78392a34f4}",
+  "file": "sqldata.pcapng"
+ },
+ {
+  "id": "LOADP00",
+  "title": "pwn-00",
+  "category": "pwn",
+  "score": 500,
+  "description": "64 位 ELF 栈溢出(ret2libc),服务已起;拿到 shell 后读 flag.txt(压测副本)",
+  "flag": "flag{07570f15-6b52-4833-890a-f1872cbc89a1}",
+  "file": "pwn01.zip",
+  "service": {
+   "binary": "/tmp/wqh_LOADP00/pwn01_chall",
+   "binary_local": "pwn01_chall",
+   "port": 19901
+  },
+  "connection": {
+   "docker_url": "nc 192.168.139.136 19901",
+   "docker_ip": "192.168.139.136",
+   "docker_port": 19901
+  }
+ },
+ {
+  "id": "LOADP01",
+  "title": "pwn-01",
+  "category": "pwn",
+  "score": 500,
+  "description": "64 位 ELF 栈溢出(ret2libc),服务已起;拿到 shell 后读 flag.txt(压测副本)",
+  "flag": "flag{07570f15-6b52-4833-890a-f1872cbc89a1}",
+  "file": "pwn01.zip",
+  "service": {
+   "binary": "/tmp/wqh_LOADP01/pwn01_chall",
+   "binary_local": "pwn01_chall",
+   "port": 19902
+  },
+  "connection": {
+   "docker_url": "nc 192.168.139.136 19902",
+   "docker_ip": "192.168.139.136",
+   "docker_port": 19902
+  }
+ }
+]

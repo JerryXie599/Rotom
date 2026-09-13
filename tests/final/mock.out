@@ -1,0 +1,14 @@
+模拟比赛服务器: http://127.0.0.1:19701
+题目 5 道: web-file-service[web], pwn-ret2libc[pwn], reverse-xor[reverse], crypto-small-e[crypto], forensics-pcap[forensics]
+把 harness 指过来: CONTEST_BASE=http://127.0.0.1:19701 CONTEST_QUERY_PATH=/query CONTEST_RESET_PATH=/reset CONTEST_SUBMIT_PATH=/submit
+[SOLVED] crypto-small-e (crypto) 用时 22s / 1 次提交
+
+==============================================================
+类别        题目                        结果    提交    耗时
+web       web-file-service          ✘     0     -
+pwn       pwn-ret2libc              ✘     0     -
+reverse   reverse-xor               ✘     0     -
+crypto    crypto-small-e            ✔     1     22s
+forensics forensics-pcap            ✘     0     -
+共 5 题,解出 1 题,平均 22s,最快 22s,最慢 22s
+==============================================================

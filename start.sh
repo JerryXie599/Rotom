@@ -25,6 +25,7 @@ WORKERS=""
 FOREGROUND=0
 DASHBOARD=1
 CHECK_ONLY=0
+SUPERVISE=1     # 默认开:崩溃自动重启(无人值守更安全);--no-supervise 关闭
 ACTION=start
 
 while [ $# -gt 0 ]; do
@@ -35,6 +36,8 @@ while [ $# -gt 0 ]; do
     --workers)    WORKERS="${2:-}"; shift 2 ;;
     --foreground|-f) FOREGROUND=1; shift ;;
     --no-dashboard) DASHBOARD=0; shift ;;
+    --supervise)  SUPERVISE=1; shift ;;
+    --no-supervise) SUPERVISE=0; shift ;;
     --check-only) CHECK_ONLY=1; shift ;;
     -h|--help) sed -n '2,30p' "$0"; exit 0 ;;
     *) echo "未知参数: $1(用 --help 看用法)"; exit 1 ;;
@@ -53,6 +56,10 @@ RUN_DIR=$(run_dir)
 
 # ---------------------------------------------------------------- stop / status
 if [ "$ACTION" = stop ]; then
+  supf="$RUN_DIR/logs/supervisor.pid"
+  if [ -f "$supf" ] && kill -0 "$(cat "$supf" 2>/dev/null)" 2>/dev/null; then
+    kill -TERM "$(cat "$supf")" 2>/dev/null; rm -f "$supf"; ok "已停 supervisor(不再自动重启)"
+  fi
   pidf="$RUN_DIR/logs/runner.pid"
   if [ -f "$pidf" ] && kill -0 "$(cat "$pidf" 2>/dev/null)" 2>/dev/null; then
     kill -TERM "$(cat "$pidf")" 2>/dev/null
@@ -133,6 +140,17 @@ case "$API_OUT" in
 esac
 
 say ""
+say "[2.5/5] 环境依赖"
+python3 --version >/dev/null 2>&1 && ok "python3 $(python3 --version 2>&1 | awk '{print $2}')" || bad "缺 python3"
+command -v pi >/dev/null && ok "pi CLI $(pi --version 2>/dev/null | head -1)" || bad "缺 pi CLI(模型接入层)"
+command -v tshark >/dev/null && ok "tshark(取证题)" || warn "缺 tshark(取证题会吃力)"
+command -v orb >/dev/null && ok "orb(可用 pwn64 虚拟机跑 amd64 二进制)" || warn "缺 orb,本机 arm64 跑不了 ELF"
+[ -f "$ROOT/knowledge/README.md" ] && ok "知识库存在($(ls "$ROOT"/knowledge/*.md 2>/dev/null | wc -l | tr -d ' ') 个方向)" || warn "知识库缺失"
+python3 tools/kb.py list >/dev/null 2>&1 && ok "知识库检索可用" || warn "知识库索引异常(跑 python3 tools/kb.py reindex)"
+FREE=$(df -g "$ROOT" 2>/dev/null | awk 'NR==2{print $4}')
+[ -n "$FREE" ] && { [ "$FREE" -gt 5 ] && ok "磁盘剩余 ${FREE}GB" || warn "磁盘仅剩 ${FREE}GB(日志会增长,注意空间)"; }
+
+say ""
 say "[3/5] 准备工作区"
 mkdir -p "$RUN_DIR/logs" "$RUN_DIR/work"
 ok "$RUN_DIR"
@@ -198,8 +216,16 @@ if [ "$FOREGROUND" = "1" ]; then
   exec python3 runner.py
 fi
 
-nohup python3 runner.py >> "$RUN_DIR/logs/runner.out" 2>&1 &
-disown 2>/dev/null || true
+if [ "$SUPERVISE" = "1" ]; then
+  # 崩溃自动重启:runner 正常收工(exit 0)才退出循环;异常退出等 5 秒重来
+  nohup bash -c 'while true; do python3 runner.py >> "'"$RUN_DIR"'/logs/runner.out" 2>&1; rc=$?; [ $rc -eq 0 ] && exit 0; echo "[supervisor] runner 异常退出(rc=$rc),5 秒后重启 $(date +%H:%M:%S)" >> "'"$RUN_DIR"'/logs/runner.out"; sleep 5; done' > /dev/null 2>&1 &
+  echo $! > "$RUN_DIR/logs/supervisor.pid"
+  disown 2>/dev/null || true
+  ok "已启用崩溃自动重启(supervisor pid $(cat "$RUN_DIR/logs/supervisor.pid"))"
+else
+  nohup python3 runner.py >> "$RUN_DIR/logs/runner.out" 2>&1 &
+  disown 2>/dev/null || true
+fi
 sleep 4
 if [ -f "$pidf" ] && kill -0 "$(cat "$pidf" 2>/dev/null)" 2>/dev/null; then
   ok "runner 已启动(pid $(cat "$pidf"))—— 项目:$PROJECT,模式:$([ "$PRACTICE" = 1 ] && echo 练习 || echo 正式),并发:${START_WORKERS:-默认}"
@@ -207,9 +233,25 @@ else
   bad "runner 启动异常,检查 $RUN_DIR/logs/runner.out"; exit 1
 fi
 
+DEADLINE_INFO=$(python3 - <<'PY' 2>/dev/null
+import json, time, pathlib, os
+f = pathlib.Path(os.environ.get("WQH_RUN_DIR") or ".", "logs", "run_deadline.json")
+if f.exists():
+    try:
+        dl = float(json.loads(f.read_text()).get("deadline") or 0)
+        if dl:
+            left = int(dl - time.time())
+            print(f"本轮截止 {time.strftime('%H:%M:%S', time.localtime(dl))}(剩余 {left//60} 分 {left%60} 秒);"
+                  f"期间坏了会自动重试,不限次数,到点自动收工")
+    except Exception:
+        pass
+PY
+)
+
 say ""
 say "=============================================================="
 say " 已经在自动跑了,现在不需要再碰电脑。"
+[ -n "$DEADLINE_INFO" ] && say " $DEADLINE_INFO"
 say ""
 say " 看实时状态:  http://127.0.0.1:$(cat "$ROOT/logs/dashboard.port" 2>/dev/null || echo 8799)"
 say " 看滚动日志:  tail -f $RUN_DIR/logs/runner.out"
