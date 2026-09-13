@@ -1,0 +1,30 @@
+[
+ {
+  "id": "FORENSIC01",
+  "title": "sqldata_forensics",
+  "category": "forensics",
+  "score": 500,
+  "description": "流量分析:附件是抓包文件,flag 被 SQL 注入外带,藏在 HTTP 响应里",
+  "flag": "flag{a0d78ce4-8072-4e14-939b-cd78392a34f4}",
+  "file": "sqldata.pcapng"
+ },
+ {
+  "id": "PWN01LOCAL",
+  "title": "pwn01_ret2libc",
+  "category": "pwn",
+  "score": 500,
+  "description": "64 位 ELF,服务端有栈溢出。题目二进制与 libc 都在附件里;拿到 shell 后 flag 在服务器上(文件名 flag.txt,可直接 cat)",
+  "flag": "flag{07570f15-6b52-4833-890a-f1872cbc89a1}",
+  "file": "pwn01.zip",
+  "service": {
+   "binary": "/tmp/wqh_PWN01LOCAL/chall",
+   "binary_local": "pwn01_chall",
+   "port": 19999
+  },
+  "connection": {
+   "docker_url": "nc 192.168.139.136 19999",
+   "docker_ip": "192.168.139.136",
+   "docker_port": 19999
+  }
+ }
+]

@@ -1,0 +1,30 @@
+# ===== 密钥与凭证(绝不入库)=====
+.env
+.env.local
+.nssctf_token
+tests/arena/arena.env
+*.key
+*.pem
+
+# ===== 运行时数据(每次比赛都会变,不入库)=====
+board.json
+board.lock
+board.tmp
+work/
+logs/
+projects/
+dist/
+traces/
+tests/localrun/
+tests/challenge_files/
+tests/mock_server.log
+tests/mock_server.out
+
+# ===== 第三方离线资料(168MB,用 knowledge/fetch_vendor.sh 重新拉取)=====
+knowledge/vendor/
+
+# ===== 缓存 =====
+__pycache__/
+*.pyc
+.DS_Store
+.kb_index.json
