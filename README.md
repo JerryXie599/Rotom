@@ -85,21 +85,7 @@ Web / Pwn / Reverse / Crypto / Forensics 各有一套 playbook 与武器库,而�
 
 ## 架构
 
-```
-                 ┌────────────────────────────────────┐
-                 │  runner.py (dispatcher, 主循环)           │
-                 │  轮询题目 → 派题 → 回收/重试/对账         │
-                 └───────┬──────────────┬─────────────┘
-                         │ 每题一个 pi 进程(隔离 work/)
-              ┌──────────┴──┐        ┌──┴──────────┐
-              │ solver: misc.  │        │ solver: pwn   │  ...
-              │ pi + bash      │        │ pi + nc/gdb   │
-              └──────────┬──┘        └──┬──────────┘
-                         │  拿到 flag 调 tools/submit_flag.py
-                 ┌───────┴──────────────┴─────────────┐
-                 │  board.json (黑板: 状态/facts/对账)       │
-                 └────────────────────────────────────┘
-```
+![Rotom 架构:runner 主循环派发 → 每题一个隔离 solver 进程 → 统一提交与黑板记账](docs/architecture.png)
 
 - `contest_api.py` — 比赛三个接口(查题/重置/提交)的封装;提交内置**限流自动退避**,并区分「答案错误」与「平台未受理」
 - `board.py` — 黑板,`board.json` 持久化,flock 并发安全;题目状态机 pending→running→solved/failed
