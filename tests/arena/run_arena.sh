@@ -72,9 +72,11 @@ export CONTEST_ADAPTER=arena
 export NSSCTF_AGENT_TOKEN="$TOK"
 export PI_PROVIDER=ds PI_MODEL=deepseek-flash
 export NETWORK_MODE=local_only
-export START_WORKERS=2 WORKERS_PER_QUESTION=2 MAX_ATTEMPTS=2 KEEP_RUNNING=1 POLL_INTERVAL=5
+export START_WORKERS=2 WORKERS_PER_QUESTION=2 MAX_ATTEMPTS=0 KEEP_RUNNING=1 POLL_INTERVAL=3
+export ROUND_WINDOW_MINUTES="${ROUND_WINDOW_MINUTES:-60}"   # 本场时长(分钟),到点自动收工
 set -a; . ./.env 2>/dev/null; set +a      # 只借并发等通用参数;接口/模型以本脚本为准
-export WQH_RUN_DIR="$RUN_DIR" CONTEST_ADAPTER=arena PI_PROVIDER=ds PI_MODEL=deepseek-flash NETWORK_MODE=local_only
+export WQH_RUN_DIR="$RUN_DIR" CONTEST_ADAPTER=arena NETWORK_MODE=local_only
+export ROUND_WINDOW_MINUTES="${ROUND_WINDOW_MINUTES:-60}"    # .env 之后重新应用,避免被覆盖
 
 say ""; say "断网模式:agent 仅可访问本机工具/知识库 + 题目目标(其余出网黑洞)"
 if [ "$FOREGROUND" = "1" ]; then

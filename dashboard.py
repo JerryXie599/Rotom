@@ -41,7 +41,7 @@ STATUS_CLASS = {"pending": "warn", "running": "run", "solved": "ok", "failed": "
 
 EDITABLE_KEYS = ("TEAM_TOKEN", "PI_BASE_URL", "PI_API_KEY", "PI_MODEL", "PI_API_TYPE",
                  "CONTEST_BASE", "CONTEST_QUERY_PATH", "CONTEST_RESET_PATH", "CONTEST_SUBMIT_PATH",
-                 "START_WORKERS", "IGNORE_SOLVED")
+                 "START_WORKERS", "IGNORE_SOLVED", "NET_PROXY")
 API_TYPES = ("openai-completions", "anthropic-messages", "openai-responses", "google-generative-ai")
 
 
@@ -240,8 +240,27 @@ def test_model() -> str:
         return "未配置模型名"
     config_mod.sync_provider(cfg, quiet=True)
     env = {**os.environ}
+    # 网络策略与 worker 完全一致(直连摘掉代理变量 / 断网走黑洞)
+    config_mod.apply_net_policy(env, cfg)
+    # 让模型端点绕过本机代理:代理客户端一关(或现场无代理),不带白名单就会 Connection error
+    import solver as _solver
+    hosts = ["localhost", "127.0.0.1", "::1"] + _solver._provider_hosts(cfg.get("PI_PROVIDER", "")) \
+            + ["api.deepseek.com", "api.kimi.com", "www.micuapi.ai"]
+    no_proxy = ",".join(dict.fromkeys(hosts))
+    cur = env.get("no_proxy", "")
+    env["no_proxy"] = env["NO_PROXY"] = (cur + "," + no_proxy).strip(",")
     if cfg.get("PI_API_KEY_VAR") and cfg.get("PI_API_KEY"):
         env[cfg["PI_API_KEY_VAR"]] = cfg["PI_API_KEY"]
+    # 模型端点绕过本机代理(本机代理一旦失效,测试会误报不通;比赛现场无代理时不受影响)
+    try:
+        import json as _json
+        mp = Path.home() / ".pi" / "agent" / "models.json"
+        host = ((_json.loads(mp.read_text(encoding="utf-8")).get("providers") or {})
+                .get(cfg.get("PI_PROVIDER") or "wqh", {}).get("baseUrl") or "").split("//")[-1].split("/")[0].split(":")[0]
+        if host:
+            env["no_proxy"] = env["NO_PROXY"] = ((env.get("no_proxy") or "") + "," + host).strip(",")
+    except Exception:
+        pass
     cmd = ["pi", "-p", "--provider", cfg.get("PI_PROVIDER") or "wqh", "--model", model,
            "--no-session", "--no-extensions", "--no-skills", "--no-prompt-templates",
            "--no-context-files", "只回复两个字:正常"]
@@ -674,6 +693,11 @@ td.q{font-family:inherit;font-size:12px;color:var(--text)}
             <select id="f_IGNORE_SOLVED" onchange="dirty=true">
               <option value="0">0 · 正式比赛</option><option value="1">1 · 练习(重跑已解出的题)</option>
             </select></div>
+          <div class="f"><label>网络</label>
+            <select id="f_NET_PROXY" onchange="dirty=true">
+              <option value="direct">direct · 直连(推荐,忽略本机代理)</option>
+              <option value="system">system · 走系统代理</option>
+            </select></div>
         </div>
         <div class="btns">
           <button class="primary" onclick="save()">保存配置</button>
@@ -709,7 +733,7 @@ td.q{font-family:inherit;font-size:12px;color:var(--text)}
 <script>
 const esc = s => (s??'').toString().replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const FIELDS = ['TEAM_TOKEN','CONTEST_BASE','CONTEST_QUERY_PATH','CONTEST_RESET_PATH','CONTEST_SUBMIT_PATH',
-                'PI_BASE_URL','PI_API_KEY','PI_MODEL','PI_API_TYPE','START_WORKERS','IGNORE_SOLVED'];
+                'PI_BASE_URL','PI_API_KEY','PI_MODEL','PI_API_TYPE','START_WORKERS','IGNORE_SOLVED','NET_PROXY'];
 const TITLES = {overview:'总览', control:'控制台', records:'记录'};
 let dirty = false, view = 'overview', filter = 'all', sel = null, state = null;
 let curProject = localStorage.getItem('wqh_project') || '默认项目';

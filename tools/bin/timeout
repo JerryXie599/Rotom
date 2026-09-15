@@ -1,0 +1,18 @@
+#!/bin/bash
+# macOS 没有 GNU timeout。harness 给 agent 放的最小替身:timeout <秒> <命令...>
+# 用途:给扫描/暴力枚举/长脚本限时,避免一条命令吃掉整个解题窗口。
+secs=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -k|--kill-after|-s|--signal) shift 2 ;;
+    --preserve-status|--foreground|-v|--verbose) shift ;;
+    -*) shift ;;
+    *) secs="$1"; shift; break ;;
+  esac
+done
+case "$secs" in ''|*[!0-9.]*) echo "timeout: 用法 timeout <秒> <命令...>" >&2; exit 125 ;; esac
+"$@" & pid=$!
+( sleep "$secs"; kill -TERM "$pid" 2>/dev/null; sleep 2; kill -9 "$pid" 2>/dev/null ) & watcher=$!
+wait "$pid" 2>/dev/null; rc=$?
+kill "$watcher" 2>/dev/null
+exit $rc

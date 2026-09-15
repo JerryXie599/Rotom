@@ -101,6 +101,13 @@ say "[1/5] 配置体检"
 set -a; . ./.env; set +a
 ok "已加载 .env"
 
+# 网络:默认直连(.env 里 NET_PROXY=direct)。本机 launchd 设了全局代理,代理客户端一关,
+# 模型/接口请求会瞬间 Connection error;直连模式下把代理变量摘掉,dashboard/runner/pi 一律直连。
+if [ "${NET_PROXY:-direct}" = "direct" ]; then
+  unset http_proxy https_proxy all_proxy HTTP_PROXY HTTPS_PROXY ALL_PROXY
+  ok "网络:直连(已忽略本机代理设置;要走代理改 .env 的 NET_PROXY=system)"
+fi
+
 if [ -z "${TEAM_TOKEN:-}" ] || [ "${TEAM_TOKEN}" = "<在此填入现场发放的 key / token>" ]; then
   bad "TEAM_TOKEN 未填写(网页控制台或 config.py --token 都行)"; exit 1
 fi

@@ -48,7 +48,31 @@ DEFAULTS = {
     "PI_API_KEY": "",
     "PI_MODEL": "",
     "PI_API_TYPE": "openai-completions",
+    # 网络:direct=直连(忽略本机代理变量,默认);system=沿用系统 http_proxy 等设置
+    "NET_PROXY": "direct",
 }
+
+PROXY_KEYS = ("http_proxy", "https_proxy", "all_proxy", "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY")
+
+
+def apply_net_policy(child_env: dict, cfg: dict | None = None) -> str:
+    """按 NET_PROXY / NETWORK_MODE 决定子进程的代理变量,返回实际生效的网络模式。
+
+    网络策略只此一处,worker(solver)、控制台的「测试模型」(dashboard)和 start.sh 共用同一套语义:
+      direct(默认) 摘掉代理变量。本机代理客户端一关,带着代理变量发请求会瞬间 Connection error
+                    (实测 pi 直接报错),而且比赛接口域名本来就要求直连。
+      system       保留环境里已有的代理设置。
+    另外 NETWORK_MODE=local_only 时把代理指向黑洞端口,让白名单之外的流量一律出不去。
+    """
+    cfg = cfg or {}
+    mode = (cfg.get("NET_PROXY") or os.environ.get("NET_PROXY") or "direct").strip() or "direct"
+    if mode == "direct":
+        for k in PROXY_KEYS:
+            child_env.pop(k, None)
+    if (cfg.get("NETWORK_MODE") or os.environ.get("NETWORK_MODE")) == "local_only":
+        for k in PROXY_KEYS:
+            child_env[k] = "http://127.0.0.1:9"
+    return mode
 
 
 def read_env() -> dict:

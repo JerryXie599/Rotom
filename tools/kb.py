@@ -35,21 +35,58 @@ PLAYBOOKS = ["web", "pwn", "reverse", "crypto", "forensics", "misc"]
 TEXT_EXT = {".md", ".txt", ".rst", ".py"}
 
 
+def _extra_roots() -> list[tuple[str, Path]]:
+    """额外知识目录(环节一 AI 对抗资料)。默认取仓库同级的「人工智能对抗资料」,
+    可用环境变量 KB_EXTRA(冒号分隔)覆盖;返回 [(rel 前缀, 绝对路径)]。"""
+    raw = os.environ.get("KB_EXTRA", "").strip()
+    roots: list[tuple[str, Path]] = []
+    if raw:
+        for item in raw.split(os.pathsep):
+            p = Path(item).expanduser()
+            if p.is_dir():
+                roots.append((p.name + "/", p))
+    else:
+        p = ROOT.parent / "人工智能对抗资料"
+        if p.is_dir():
+            roots.append(("ai/", p))
+    return roots
+
+
+EXTRA_ROOTS = _extra_roots()
+
+
+def rel_of(p: Path) -> str:
+    """文件相对于知识库的显示名:knowledge 下不加前缀,额外目录加前缀(如 ai/)。"""
+    for prefix, root in EXTRA_ROOTS:
+        try:
+            return prefix + str(p.relative_to(root))
+        except ValueError:
+            pass
+    try:
+        return str(p.relative_to(KB))
+    except ValueError:
+        return p.name
+
+
+def _usable(p: Path) -> bool:
+    if not p.is_file() or p.suffix.lower() not in TEXT_EXT:
+        return False
+    if p.name.startswith("."):
+        return False
+    try:
+        if p.stat().st_size > 3_000_000:   # 超大文件跳过,避免拖慢
+            return False
+    except OSError:
+        return False
+    return True
+
+
 def iter_docs() -> list[Path]:
     out = []
-    if not KB.exists():
-        return out
-    for p in KB.rglob("*"):
-        if not p.is_file() or p.suffix.lower() not in TEXT_EXT:
-            continue
-        if p.name.startswith("."):
-            continue
-        try:
-            if p.stat().st_size > 3_000_000:   # 超大文件跳过,避免拖慢
-                continue
-        except OSError:
-            continue
-        out.append(p)
+    if KB.exists():
+        out += [p for p in KB.rglob("*") if _usable(p)]
+    for _prefix, root in EXTRA_ROOTS:
+        out += [p for p in root.rglob("*") if _usable(p)]
     return out
 
 
@@ -72,7 +109,7 @@ def split_sections(text: str) -> list[tuple[str, str]]:
 
 def build_index(force: bool = False) -> list[dict]:
     docs = iter_docs()
-    stamp = {str(p.relative_to(KB)): p.stat().st_mtime for p in docs}
+    stamp = {rel_of(p): p.stat().st_mtime for p in docs}
     if not force and INDEX.exists():
         try:
             cached = json.loads(INDEX.read_text(encoding="utf-8"))
@@ -86,7 +123,7 @@ def build_index(force: bool = False) -> list[dict]:
             text = p.read_text(encoding="utf-8", errors="ignore")
         except OSError:
             continue
-        rel = str(p.relative_to(KB))
+        rel = rel_of(p)
         for heading, body in split_sections(text):
             body = body.strip()
             if len(body) < 20 and not heading:
@@ -159,10 +196,10 @@ def cmd_search(query: str, limit: int, playbooks_only: bool) -> int:
     print(f"知识库检索「{query}」命中 {len(results)} 段,显示前 {min(limit, len(results))} 段:\n")
     for sc, sec in results[:limit]:
         head = f" » {sec['heading']}" if sec["heading"] else ""
-        print(f"[{sc:>4}] knowledge/{sec['file']}{head}")
+        print(f"[{sc:>4}] {sec['file']}{head}")
         print(f"       {snippet(sec['text'], tokens)}")
         print()
-    print("查看全文: python3 tools/kb.py show <file 路径,可省 .md>")
+    print("查看全文: python3 tools/kb.py show <上面的路径,可省 .md>")
     return 0
 
 
@@ -170,20 +207,25 @@ def cmd_show(name: str) -> int:
     if not KB.exists():
         print("knowledge/ 不存在")
         return 2
+    clean = name[:-3] if name.lower().endswith(".md") else name
     cand = [KB / name, KB / f"{name}.md", KB / name.rstrip("/")]
+    for prefix, root in EXTRA_ROOTS:          # 额外目录(ai/…)优先按前缀解析
+        if clean.startswith(prefix):
+            cand.insert(0, root / clean[len(prefix):])
+        cand += [root / clean, root / f"{clean}.md"]
     for c in cand:
         if c.is_file():
             print(c.read_text(encoding="utf-8", errors="ignore"))
             return 0
     # 模糊匹配:按文件名子串找
-    hits = [p for p in iter_docs() if name.lower() in str(p.relative_to(KB)).lower()]
+    hits = [p for p in iter_docs() if clean.lower() in rel_of(p).lower()]
     if len(hits) == 1:
         print(hits[0].read_text(encoding="utf-8", errors="ignore"))
         return 0
     if hits:
         print(f"「{name}」匹配到 {len(hits)} 个文件,请指定更精确的路径:")
         for p in hits[:15]:
-            print("  knowledge/" + str(p.relative_to(KB)))
+            print("  " + rel_of(p))
         return 1
     print(f"没找到 {name}。可用:python3 tools/kb.py list")
     return 1
@@ -203,7 +245,7 @@ def cmd_grep(pattern: str, limit: int) -> int:
             continue
         for i, line in enumerate(lines, 1):
             if rx.search(line):
-                print(f"knowledge/{p.relative_to(KB)}:{i}: {' '.join(line.split())[:200]}")
+                print(f"{rel_of(p)}:{i}: {' '.join(line.split())[:200]}")
                 n += 1
                 if n >= limit:
                     print(f"(已达上限 {limit} 条)")
@@ -235,6 +277,12 @@ def cmd_list() -> int:
             if d.is_dir():
                 cnt = sum(1 for _ in d.rglob("*.md"))
                 print(f"  vendor/{d.name:<26} {cnt} 个 markdown 文档")
+    for prefix, root in EXTRA_ROOTS:
+        files = [p for p in root.rglob("*") if _usable(p)]
+        if files:
+            print(f"\n== 额外资料({prefix.rstrip('/')}/) ==")
+            for p in sorted(files):
+                print(f"  {prefix}{p.relative_to(root)}")
     print("\n用法: python3 tools/kb.py search \"关键词\" | show <方向|路径> | grep <正则>")
     return 0
 

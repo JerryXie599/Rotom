@@ -1,0 +1,21 @@
+[
+ {
+  "id": "FINAL_PWN",
+  "title": "pwn-ret2libc",
+  "category": "pwn",
+  "score": 500,
+  "description": "64 位 ELF 栈溢出(附件含二进制与 libc)。服务端拿到 shell 后 flag 在 flag.txt。",
+  "flag": "flag{07570f15-6b52-4833-890a-f1872cbc89a1}",
+  "file": "pwn01.zip",
+  "service": {
+   "binary": "/tmp/wqh_FINAL_PWN/pwn01_chall",
+   "binary_local": "pwn01_chall",
+   "port": 19802
+  },
+  "connection": {
+   "docker_url": "nc 192.168.139.136 19802",
+   "docker_ip": "192.168.139.136",
+   "docker_port": "19802"
+  }
+ }
+]

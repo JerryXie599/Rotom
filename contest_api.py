@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import os
+import random
 import time
 import urllib.parse
 import urllib.request
@@ -96,3 +97,45 @@ def is_correct(resp: dict) -> bool:
     if resp.get("code") != 0:
         return False
     return resp.get("status") == 1 or "正确" in str(resp.get("message", ""))
+
+
+def is_verdict(resp: dict) -> bool:
+    """这份响应是不是"平台对答案的判定"(code 0 = 受理了)。
+
+    code != 0 是**接口/业务层没受理**(限流 101「操作太过频繁」、token 失效、比赛已结束…),
+    不能当成"flag 错了"——第二轮实测就把限流当成错答记账了,agent 会因此去重推 flag、白烧错误提交次数。
+    """
+    return resp.get("code") == 0
+
+
+RATE_LIMIT_HINTS = ("太过频繁", "操作频繁", "too many", "rate limit")
+
+
+def is_rate_limited(resp: dict) -> bool:
+    """平台限流:属于暂时性错误,退避后重试即可。"""
+    if resp.get("code") == 0:
+        return False
+    return resp.get("code") in (101, 429) and any(
+        h in str(resp.get("message", "")).lower() for h in RATE_LIMIT_HINTS)
+
+
+def submit_with_retry(token: str, question_id: str, answer: str, timeout: int = DEFAULT_TIMEOUT,
+                      attempts: int = 5, base_delay: float = 1.5) -> dict:
+    """提交 flag,并对**限流/网络抖动**自动退避重试(每次加一点随机抖动,避免多 worker 同时撞限流)。
+
+    注意:只重试"没被受理"的情况——平台明确判了答案错误(code 0 但不是正确)时立即返回,不浪费提交次数。
+    """
+    last: dict = {}
+    for i in range(attempts):
+        delay = base_delay * (i + 1) + random.uniform(0, 0.7)
+        try:
+            resp = submit_flag(token, question_id, answer, timeout=timeout)
+        except Exception as e:
+            last = {"code": -1, "message": f"网络错误: {e}"}
+        else:
+            last = resp
+            if is_verdict(resp) or not is_rate_limited(resp):
+                return resp
+        if i < attempts - 1:
+            time.sleep(delay)
+    return last

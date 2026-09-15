@@ -25,6 +25,8 @@ from pathlib import Path
 
 import threading
 
+import config as config_mod
+
 ROOT = Path(__file__).resolve().parent          # 代码位置(工具脚本在 ROOT/tools 下)
 RUN_DIR = Path(os.environ.get("WQH_RUN_DIR") or ROOT)  # 本项目的数据目录
 WORK_DIR = RUN_DIR / "work"
@@ -58,7 +60,7 @@ PROMPT_TEMPLATE = """你是一名顶级 CTF 选手,正在参加"湾区杯"AI 智
 
 # 你的身份
 你是本题的第 {slot} 号 agent(本题共 {total} 个 agent 并行解题)。你的分工侧重点:{angle}
-这是本题的**第 {attempt} 次尝试**;本工作目录 `{wdir}` **可能保留了上一次尝试留下的脚本与笔记**
+{squad_block}这是本题的**第 {attempt} 次尝试**;本工作目录 `{wdir}` **可能保留了上一次尝试留下的脚本与笔记**
 (例如 exp.py、dbg_*.py、NOTES.md)。**先 `ls -la` 看清楚,能复用的直接复用、在它基础上改,不要从零重写。**
 单次尝试限时约 {worker_timeout} 秒,到点会被强制中断(下次尝试会保留你写的文件)。
 
@@ -82,6 +84,17 @@ PROMPT_TEMPLATE = """你是一名顶级 CTF 选手,正在参加"湾区杯"AI 智
 - 提交 flag **只能**用 `python3 {submit_tool} {qid} '<flag>'`;不要自己写脚本直连平台接口
   (绕过提交工具会导致本题无法记账、持续重试、白烧算力)。输出 CORRECT 即成功。
 - 不要试图改黑板/状态文件,状态由 harness 维护。
+
+# 并行与增援(重活别单干)
+- **长命令一律限时(第三轮实测教训)**:本机是 macOS,**系统没有 `timeout`/`gtimeout`**,harness 已在 PATH 里放了 `timeout` 替身。
+  扫描/枚举/暴力这类可能跑很久的命令必须写成 `timeout 60 nmap ...`、`timeout 120 python3 brute.py`;
+  实测有 agent 用 `nmap -p-`(全端口)跑了 8 分钟没返回,**把整个解题窗口吃掉了**。
+  需要更久的任务就 `nohup 你的命令 > out.log 2>&1 &` 后台跑,先干别的、回头 `tail out.log` 看结果。
+- **自己的活先自己并行**:爆破/枚举/扫描这类可切分的任务,用 `xargs -P 8` 或后台任务并行,例如:
+  `seq 0 255 | xargs -P 8 -I{{}} curl -s "http://TARGET/?id={{}}"`,或 `for i in ...; do (cmd &) ; done; wait`。
+- **确实需要更多算力时,在共享黑板写一行**(harness 会自动给你派人,每道题最多 4 个 agent):
+  `echo "- [w{slot} 请求增援] 需要 2 个 agent:一个爆破 key 区间 0-2^32,一个扫 /admin 及备份文件" >> {shared}`
+  写清**可并行的具体分工**;如果任务本质是串行的(如写一条完整利用链),不要乱要人,写完继续自己推进。
 
 **强制协同规则(每一步都适用)**:
 1. 你的**第一个动作**必须是: cat {shared} 然后立刻追加你的计划:
@@ -129,7 +142,7 @@ binwalk、file/strings/objdump/otool/nm/lldb/gdb、curl/nc/socat、java/javac。
 搜索用 bash 的 grep/ripgrep;写脚本用 write、改动用 edit;只有需要执行命令时才用 bash。
 
 {net_rule}
-{kb_hint}{time_rule}
+{kb_hint}{env_hint}{time_rule}
 # 目标(goal)
 找到本题 flag,然后用 bash 执行以下命令提交:
   python3 {submit_tool} {qid} 'flag{{你拿到的内容}}'
@@ -138,7 +151,17 @@ binwalk、file/strings/objdump/otool/nm/lldb/gdb、curl/nc/socat、java/javac。
 若第一次提交被拒,优先检查**前缀/包裹格式**是否与题目环境一致,再改内容——别换汤不换药地重复提交同一格式。
 最多提交 2 次错误 flag(错误次数过多会被判失败),没把握就先分析透再提交。
 
-输出 CORRECT 即解题成功——注意:即使平台提示"该题目已被攻克,不计分",只要脚本输出 CORRECT 就算成功,绝对不要重复提交;输出 WRONG 才说明 flag 不对,继续分析。
+**纪律:不许爆破 flag,不许交本地/测试用的假 flag(违反会白烧提交次数甚至判违规)**
+- **禁止任何形式的"猜 flag"**:不要枚举/字典/撞库/并发轮询去试候选 flag,也不要靠"多提交几次碰运气"。
+  flag 必须来自**真正的解题路径**(远程服务回显、真实附件/流量/文件里的数据),拿到什么就提交什么。
+- **本地自造的 flag 一律不算数**:本地复现时你自己写的 `flag.txt`、示例/占位 flag(`flag{{test}}`、`flag{{fake}}`、文档里的样例)、
+  靶场或 mock 环境自带的 flag,都**不是比赛答案**,提交前必须确认它来自**本题的真实目标**(远程容器/真实附件),
+  而不是你本机或本地环境生成的。拿不准就先分析来源,不要提交。
+
+输出 CORRECT 即解题成功——注意:即使平台提示"该题目已被攻克,不计分",只要脚本输出 CORRECT 就算成功,绝对不要重复提交。
+**只有输出 WRONG 才是平台判定 flag 不对**,那才需要回去继续分析。
+**输出 `SUBMIT_BUSY` / `SUBMIT_ERROR` 表示平台没受理**(并发限流「操作太过频繁」或接口抖动):这**不是答错**、也不消耗错误提交次数,
+原地 `sleep 5` 后重试同一条命令即可,千万不要因此改 flag 或换格式重推。
 
 # 结束条件(极其重要)
 只有 submit 输出 CORRECT 后你才可以结束。在此之前绝对不允许收尾、总结或停止输出工具调用:
@@ -183,6 +206,24 @@ def category_playbook(category: str, limit: int = 2600) -> str:
     return text
 
 
+PWN_ENV_HINT = """
+# 环境速查(省时间,实测踩过的坑)
+- **pwn64 与 macOS 共享同一文件系统**:工作区路径在 VM 里可直接访问(不需拷到 /tmp)。
+  运行脚本用:`orb -m pwn64 bash -lc 'cd <工作区绝对路径> && python3 exp.py'`。
+- 每条命令都是**全新 shell**,cwd 固定为你的工作目录:题目根目录用 `cd ..`,附件在 `../files/`。
+- **libc 处理**:题目给了 libc 就直接用它的偏移(`libc.symbols['system']`),**不要自己去查/下载 libc**;
+  给了 ld 就 `patchelf --set-interpreter ./ld-x.so --set-rpath . ./chall` 做本地复现;
+  只给 libc 没给 ld 时本地通常跑不起来 → **优先直接打远程**,用远程泄露算基址;
+  既没 libc 也没 ld 才用本地库识别:`cd ~/libc-database && ./find puts <低3位>`(禁止联网识别服务)。
+- 调试工具:gdb / checksec / ROPgadget / ropper / patchelf(无 pwndbg、无 one_gadget)。
+"""
+
+
+def _env_hint(category: str) -> str:
+    """按方向给一段环境速查(pwn/re 最需要;其它方向不给,免得占上下文)。"""
+    return PWN_ENV_HINT if (category or "").lower() in ("pwn", "re", "reverse") else ""
+
+
 def _time_rule() -> str:
     """生成"时间预算"提示:本场剩余多久、该怎么分配。挑战窗口只有 30 分钟,速度是关键。"""
     ts = os.environ.get("RUN_DEADLINE_TS")
@@ -201,6 +242,21 @@ def _time_rule() -> str:
             f"- 剩余 3 分钟时,把手上最有把握的候选 flag **先提交**(能拿分比完美更重要);\n"
             f"- 宁可少做几步分析,也要保证在窗口内产出并提交 flag。\n")
     return f"# 时间\n剩余 {m} 分钟。\n"
+
+
+def _provider_hosts(provider: str) -> list[str]:
+    """从 ~/.pi/agent/models.json 读出当前 provider 的 baseUrl 主机名,保证它绕过本机代理。"""
+    if not provider:
+        return []
+    try:
+        import json as _json
+        mp = Path.home() / ".pi" / "agent" / "models.json"
+        entry = (_json.loads(mp.read_text(encoding="utf-8")).get("providers") or {}).get(provider) or {}
+        url = entry.get("baseUrl") or ""
+        host = url.split("//")[-1].split("/")[0].split(":")[0]
+        return [host] if host else []
+    except Exception:
+        return []
 
 
 def _safe_name(s: str) -> str:
@@ -242,6 +298,26 @@ def project_dir(q: dict) -> Path:
 
 _prep_locks: dict[str, threading.Lock] = {}
 _prep_locks_guard = threading.Lock()
+
+
+HELPER_RE = re.compile(r"\[w\d+\s*请求增援\]\s*(.+)")
+
+
+def read_helper_requests(q: dict) -> list[str]:
+    """从 SHARED.md 里读出 agent 写的增援请求(每行一条),返回分工描述列表。"""
+    shared = project_dir(q) / "SHARED.md"
+    if not shared.exists():
+        return []
+    try:
+        text = shared.read_text(encoding="utf-8", errors="ignore")
+    except OSError:
+        return []
+    out = []
+    for line in text.splitlines():
+        m = HELPER_RE.search(line)
+        if m:
+            out.append(" ".join(m.group(1).split())[:400])
+    return out
 
 
 def _prep_lock(qid: str) -> threading.Lock:
@@ -308,6 +384,9 @@ def build_prompt(q: dict, slot: int, total: int, wdir: Path, attempt: int = 1,
     return PROMPT_TEMPLATE.format(
         slot=slot, total=total, angle=ANGLES.get(slot, ANGLES[1]),
         attempt=attempt, worker_timeout=worker_timeout or 420,
+        squad_block=(("**你被派来增援,本次的专门分工是:" + str(q["squad_task"]) + "**\n"
+                      "只做这一块,做完把结果写进 SHARED.md,不要重复其他 agent 的工作。\n\n")
+                     if q.get("squad_task") else ""),
         qid=q["question_id"], title=q.get("title", ""), category=q.get("category", ""),
         score=q.get("score", 0), description=q.get("description", ""),
         attributes=q.get("attributes"), capabilities=q.get("capabilities"),
@@ -315,6 +394,7 @@ def build_prompt(q: dict, slot: int, total: int, wdir: Path, attempt: int = 1,
         extensions_block=(f"- 扩展信息: {q.get('extensions')}\n" if q.get("extensions") else ""),
         wdir=wdir, files=root / "files", shared=root / "SHARED.md", root=root,
         playbook=category_playbook(q.get("category", "")) or "(本方向暂无节选,可用 kb.py list 查看)",
+        env_hint=_env_hint(q.get("category", "")),
         kb_hint=("\n# 知识库自动检索结果(上一轮没解出,这是与本题最相关的片段,先对照着看)\n"
                  + (q.get("kb_hint") or "").strip() + "\n"
                  if q.get("kb_hint") else ""),
@@ -345,22 +425,27 @@ def launch(q: dict, slot: int, total: int, wdir: Path, env: dict,
         build_prompt(q, slot, total, wdir, attempt=attempt, worker_timeout=timeout),
     ]
     child_env = {**os.environ, "TEAM_TOKEN": env["TEAM_TOKEN"]}
-    # 断网模式:除白名单外一律走黑洞端口(agent 无法上网查资料,只能打题目目标)
-    if env.get("NETWORK_MODE") == "local_only":
-        allow = ["localhost", "127.0.0.1", "::1", "api.deepseek.com", "www.nssctf.cn",
-                 "files.nssctf.cn", "anna.nssctf.cn"]
-        allow += [h for h in (env.get("NET_ALLOW") or "").split(",") if h]
-        conn = q.get("connection") or {}
-        for v in list(conn.values()):          # 题目容器地址必须放行
-            v = str(v)
-            host = v.split("//")[-1].split("/")[0].split(":")[0]
-            host = host.replace("nc ", "").strip()
-            if host and not host[0].isdigit():
-                allow.append(host)
-        no_proxy = ",".join(dict.fromkeys(allow))
-        for k in ("http_proxy", "https_proxy", "all_proxy", "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY"):
-            child_env[k] = "http://127.0.0.1:9"   # 黑洞:未豁免的出网立即失败
-        child_env["no_proxy"] = child_env["NO_PROXY"] = no_proxy
+    # 把 tools/bin 放到 PATH 最前:macOS 没有 timeout,这里提供了替身,agent 才能给长命令限时
+    child_env["PATH"] = f"{ROOT / 'tools' / 'bin'}:{child_env.get('PATH', '')}"
+    # ---- 代理处理(实测教训:本机代理一旦失效,模型请求全挂;所以模型端点必须绕过代理) ----
+    # 1) 白名单始终包含:本机 + 模型端点 + 靶场/比赛域名 + 本题容器主机
+    allow = ["localhost", "127.0.0.1", "::1", "*.ichunqiu.com", "ichunqiu.com",
+             "www.nssctf.cn", "files.nssctf.cn", "anna.nssctf.cn",
+             "api.deepseek.com", "api.kimi.com", "www.micuapi.ai"]
+    allow += [h for h in (env.get("NET_ALLOW") or "").split(",") if h]
+    allow += _provider_hosts(env.get("PI_PROVIDER", ""))     # 从 pi 的 models.json 读当前 provider 的域名
+    conn = q.get("connection") or {}
+    for v in list(conn.values()):          # 题目容器地址必须放行
+        v = str(v)
+        host = v.split("//")[-1].split("/")[0].split(":")[0].replace("nc ", "").strip()
+        if host and not host[0].isdigit():
+            allow.append(host)
+    no_proxy = ",".join(dict.fromkeys(allow))
+    cur = child_env.get("no_proxy", "")
+    child_env["no_proxy"] = child_env["NO_PROXY"] = (cur + "," + no_proxy).strip(",")
+
+    # 2) 网络策略(直连摘掉代理变量 / 断网走黑洞):语义统一在 config.apply_net_policy
+    config_mod.apply_net_policy(child_env, env)
 
     # 比赛相关域名直连:本机代理会破坏到 apiterminator/g.ichunqiu.com 的 HTTPS
     bypass = "*.ichunqiu.com,ichunqiu.com"
@@ -450,15 +535,46 @@ def count_tool_calls(log_path: Path) -> int:
 # 模型侧失败的日志特征(pi 的 jsonl 里会出现这些字样)
 #   quota: 额度/余额耗尽,重试无用,应长时间暂停等待窗口重置
 #   rate_limit: 并发/频率限制,重试有意义,但应下调并发
+# 注意:这些模式是在 **worker 日志尾部全文** 上匹配的,里面混着模型的思考与命令输出,
+# 所以**绝不能用裸词**(quota/balance/额度/余额…)——第三轮实测:crypto01 的 agent 思考里写了
+# "the modulus n is not balanced",被裸词 `balance` 命中 → 误判"额度耗尽" → 全局暂停派发 900 秒。
+# 只匹配"服务端错误语义"的完整短语。
 QUOTA_PATTERNS = re.compile(
-    r"5-hour usage limit|usage limit|quota|insufficient|balance|余额|额度|欠费", re.IGNORECASE)
+    r"5-hour usage limit|usage limit reached|exceeded your current quota|quota exceeded|"
+    r"insufficient (?:balance|quota|funds|credits)|(?:balance|credits?)[ _]?(?:is )?(?:insufficient|exhausted|depleted)|"
+    r"(?:余额|额度|配额)(?:不足|已耗尽|耗尽|用尽|用完)|欠费|账户余额不足",
+    re.IGNORECASE)
 RATE_LIMIT_PATTERNS = re.compile(
-    r"\b429\b|rate.?limit|too many requests|concurren|overload|capacity|请求过于频繁",
+    r"\b429\b|rate.?limit(?:ed|_error| reached)?|too many requests|请求(?:过于|太过)频繁|"
+    r"concurrency limit|overloaded(?:_error)?|engine is currently overloaded",
     re.IGNORECASE)
 
 
+# 模型端点连不上(本机代理失效/网络抖动)的特征
+NETWORK_PATTERNS = re.compile(
+    r"Connection error|ECONNREFUSED|ECONNRESET|ETIMEDOUT|ENOTFOUND|fetch failed|socket hang up|"
+    r"network error|502 Bad Gateway|503 Service", re.IGNORECASE)
+
+# "这段文本像不像一条错误":关键词必须与错误语义**同时出现**才算失败证据。
+# 日志里有大段模型自己的思考,做 web 题时它会反复写 "rate limit"、写 crypto 时会写 "not balanced",
+# 只按关键词判会把散文当成服务端错误(第三轮实测:36→29 的降级和 900s 暂停都是这么来的)。
+ERROR_MARKERS = re.compile(
+    r"error|exception|failed|failure|refused|unavailable|exceeded|denied|"
+    r"\b4\d\d\b|\b5\d\d\b|status.?code|retry.?after|\"code\"|traceback",
+    re.IGNORECASE)
+
+
+def _hits_with_error_context(rx: re.Pattern, text: str, window: int = 160) -> bool:
+    """关键词命中且**附近出现错误语义**才算数(避免把模型散文当成服务端报错)。"""
+    for m in rx.finditer(text):
+        seg = text[max(0, m.start() - window): m.end() + window]
+        if ERROR_MARKERS.search(seg):
+            return True
+    return False
+
+
 def classify_failure(log_path: Path, max_bytes: int = 200_000) -> str | None:
-    """读 worker 日志尾部,判断是否为模型侧限制。返回 None/'rate_limit'/'quota'。"""
+    """读 worker 日志尾部,判断是否为模型侧限制。返回 None/'rate_limit'/'quota'/'net'。"""
     try:
         with open(log_path, "rb") as f:
             f.seek(0, os.SEEK_END)
@@ -467,8 +583,10 @@ def classify_failure(log_path: Path, max_bytes: int = 200_000) -> str | None:
             tail = f.read().decode("utf-8", "ignore")
     except OSError:
         return None
-    if QUOTA_PATTERNS.search(tail):
+    if _hits_with_error_context(QUOTA_PATTERNS, tail):
         return "quota"
-    if RATE_LIMIT_PATTERNS.search(tail):
+    if _hits_with_error_context(RATE_LIMIT_PATTERNS, tail):
         return "rate_limit"
+    if _hits_with_error_context(NETWORK_PATTERNS, tail, window=80):
+        return "net"          # 模型端点连不上:退避重试,别当题目失败
     return None

@@ -64,3 +64,43 @@ print(s.check()); print(bytes([s.model()[x].as_long() for x in xs]))
 ## flag 格式(实测踩过)
 前缀**不固定**,见过 `NSSCTF{...}`、`flag{...}`、`LitCTF{...}` 等。提交前先看题目描述/容器 banner/回显/附件里有没有格式提示。
 若第一次被拒,**优先检查前缀**再改内容;同一格式别重复提交(错误次数多会被判失败,靶场上限 20 次)。
+
+## 格攻击 / Coppersmith(部分密钥泄露、小根)
+
+**可用工具**:
+- **`fpylll`(已装在 pwn64,apt 的 python3-fpylll)** —— 快后端,格攻击**必须在 pwn64 里跑**:
+  `orb -m pwn64 bash -lc 'cd <工作区> && python3 tools/crypto/coppersmith.py ...'`(macOS 本机没有 fpylll,会退回 sympy 慢 2 倍);
+- `sympy`(`Matrix.lll()`,纯 Python 兜底)、`gmpy2`、`pycryptodome`;
+- **没有 `sage`**(源里没有该包,装不上)、没有 `olll`。需要 sage 才能秒解的场合,只能用上面的组合慢慢算。
+
+### 现成工具(已实测可用)
+```bash
+# 已知 p 的高位和低位,求中间未知段(模未知因子,beta=0.5)
+python3 tools/crypto/coppersmith.py     --n <N> --coeffs "<常数项>,<一次项系数>" --beta 0.5 --xbits <未知位数> [--m 8]
+# 例:p_high*2^(low+mid) + p_low + x*2^low ≡ 0 (mod p)
+#   --coeffs "p_high*2^(low+mid)+p_low 的值, 2^low 的值"  --beta 0.5 --xbits mid
+```
+作为库:
+```python
+import sys; sys.path.insert(0, "tools/crypto")
+from coppersmith import coppersmith_univariate
+roots = coppersmith_univariate([c0, c1], N, beta=0.5, X=1 << mid_bits, mm=8)   # 返回小根
+```
+- **首一化**:工具会自动乘 LC 的模逆使其在 mod N 下首一(非首一多项式必须先做这步);
+- **参数**:m 越大可解的未知位数越多但格越大越慢;t 默认 `floor(d*m*(1/beta-1))`;
+- **性能(实测)**:512 位 n、150 位未知、m=6(dim=12)→ **pwn64+fpylll 约 58 秒**(在 macOS 本机走 sympy 要 ~2 分钟);
+  1024 位 n、459 位未知需要 m≈10(dim≈20)→ 会明显更慢(可能十几分钟)。**先跑小参数试,再逐步加大**。
+- 注意:**不要**为了提速把格元素对 N 取模 —— 这个构造(N^{m-i} 族)必须用精确系数,取模会算错(实测取模后 3.9 秒但找不到根)。
+
+### 慢任务怎么跑(重要)
+格攻击动辄几分钟,不要在前台干等(worker 有单题限时,超时会被中断):
+```bash
+orb -m pwn64 bash -lc 'cd <工作区> && nohup python3 coppersmith_run.py > copp.log 2>&1 &'
+# 过一会儿回来看:tail -20 copp.log
+```
+把中间结果写进文件,即使这次尝试被超时打断,下一轮也能接着算(工作目录会保留)。
+
+### 判断能不能用 Coppersmith
+- 未知比特数 < N 的位数 × 0.25 左右(部分密钥泄露,beta=0.5 时)才有希望;
+- p 的未知段太长(例如 1024 位 n 里未知 600+ 位)→ 直接放弃这条路,考虑其它攻击;
+- 需要 sage 才能秒解的场合,本机只能慢慢算 —— **提前判断可行性比硬算重要**。

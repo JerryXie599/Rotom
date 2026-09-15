@@ -65,3 +65,9 @@ bkcrack -C a.zip -c inner.txt -p plain.txt    # 已知明文攻击
 VBE 例子(实测):`#@~^DgAAAA==\ko$K6,JC V^GJqAQAAA==^#~@` → `MsgBox "Hello"`。
 先 base64 解一层再遇到 `#@~^` 的,先解 base64 再喂给 vbe_decode.py。
 **不要联网装工具**:断网环境下 `pip/apt/curl` 访问外网会被拒,缺工具就用本地已有实现或自己照算法写。
+
+## 小心"诱饵 flag"(实测踩坑)
+二进制/附件里出现的 `flag{...}` 字符串**可能是诱饵**(例如 `flag{tcache_vault_local_pwned}` 这种明显是假的),
+真 flag 一般在**服务端的 flag 文件**里(拿到 shell 后 `cat flag* /flag`),或题目/平台上另有说明。
+- 优先提交**从目标环境实际读到**的 flag(远程文件、数据库、接口返回),而不是从二进制里抠出来的字符串;
+- 若提交被拒且你交的是"二进制里找到的",换去读服务端文件;正确 flag 通常形如 `NSSCTF{...}` / `flag{...}` 且带随机串。

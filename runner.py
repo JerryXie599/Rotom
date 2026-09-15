@@ -48,7 +48,8 @@ def _int(name: str, default: int) -> int:
 POLL_INTERVAL = _int("POLL_INTERVAL", 5)
 START_WORKERS = _int("START_WORKERS", 6)          # 起始并发(高并发抢跑)
 MIN_WORKERS = _int("MIN_WORKERS", 1)              # 并发下限(降到这里为止)
-WORKERS_PER_QUESTION = _int("WORKERS_PER_QUESTION", 2)  # 同题最多几个 agent
+WORKERS_PER_QUESTION = _int("WORKERS_PER_QUESTION", 2)  # 同题默认几个 agent
+MAX_HELPERS_PER_QUESTION = _int("MAX_HELPERS_PER_QUESTION", 4)  # agent 在黑板请求增援后,同题最多几个 agent
 WORKER_TIMEOUT = _int("WORKER_TIMEOUT", 1500)
 MAX_ATTEMPTS = _int("MAX_ATTEMPTS", 0)            # 单题总尝试次数;0=不限(以窗口时间为界)
 REDUCE_COOLDOWN = _int("REDUCE_COOLDOWN", 60)     # 两次降并发之间的冷却(秒)
@@ -188,6 +189,11 @@ def env_config() -> dict:
         # 可选:模型 key 对应的环境变量名(若 key 已写在 pi 的 models.json 里则留空)
         "PI_API_KEY_VAR": os.environ.get("PI_API_KEY_VAR", ""),
         "PI_API_KEY": os.environ.get("PI_API_KEY", ""),
+        # 断网模式与白名单必须传进 worker,否则 solver 里的判断永远为假(曾经漏掉 → 全员继承死代理)
+        "NETWORK_MODE": os.environ.get("NETWORK_MODE", ""),
+        "NET_ALLOW": os.environ.get("NET_ALLOW", ""),
+        # 直连/走代理同样要传进去(默认直连)
+        "NET_PROXY": os.environ.get("NET_PROXY", "direct"),
     }
 
 
@@ -439,12 +445,43 @@ def reap() -> None:
             if workers_of(qid):  # 同题还有别的 agent 在跑,不影响题目状态
                 continue
             entry["worker_pid"] = None
+            if reason == "net":
+                # 模型端点连不上:退避重试(次数不限,但要避免热循环)
+                n = entry.get("net_failures", 0) + 1
+                entry["net_failures"] = n
+                wait = min(300, 20 * n)
+                entry["status"] = board_mod.STATUS_PENDING
+                entry["next_retry_at"] = time.time() + wait
+                board_mod.add_fact(b, "runner",
+                                   f"{entry['title']} 模型连接失败(第 {n} 次),{wait}s 后重试")
+                if n == 1:
+                    log(f"⚠ 模型端点连不上(Connection error)—— 检查网络/代理设置;{wait}s 后重试")
+                continue
             if reason in ("rate_limit", "quota"):
                 entry["attempts"] = max(0, entry["attempts"] - 1)  # 基础设施问题,不算失败
                 entry["status"] = board_mod.STATUS_PENDING
                 entry["next_retry_at"] = time.time() + 30
                 board_mod.add_fact(b, "runner", f"{entry['title']} 模型侧限制({reason}),退避重试")
                 continue
+            # 空跑检测:起来了但一次工具都没调就退出 → 多半是环境/模型故障,退避并累计熔断
+            try:
+                did_work = solver.count_tool_calls(w["proc"]._wqh_log_path) > 0
+            except Exception:
+                did_work = True
+            if not did_work:
+                zw = entry.get("zero_work", 0) + 1
+                entry["zero_work"] = zw
+                wait = min(300, 20 * zw)
+                entry["status"] = board_mod.STATUS_PENDING
+                entry["next_retry_at"] = time.time() + wait
+                if zw >= 3:
+                    board_mod.add_fact(b, "runner",
+                                       f"⚠ {entry['title']} 连续 {zw} 次空跑(0 工具调用),疑似模型/环境故障,退避 {wait}s")
+                    log(f"⚠ {entry['title']} 连续 {zw} 次空跑(worker 没执行任何命令),退避 {wait}s —— 请检查模型连通性")
+                continue
+            if entry.get("zero_work"):
+                entry["zero_work"] = 0
+            entry["net_failures"] = 0
             runtime = time.time() - w["started"]
             unlimited = entry.get("max_attempts", 0) <= 0 or MAX_ATTEMPTS <= 0
             if unlimited or entry["attempts"] < entry["max_attempts"]:
@@ -508,6 +545,15 @@ def spawn(env: dict) -> None:
             s |= {slot for (q, slot) in _prepping if q == qid}
             return s
 
+        def cap_for(entry: dict) -> int:
+            """同题并发上限:默认 WORKERS_PER_QUESTION;agent 在黑板请求增援后放宽到 MAX_HELPERS_PER_QUESTION。"""
+            try:
+                reqs = solver.read_helper_requests(entry)
+            except Exception:
+                reqs = []
+            return MAX_HELPERS_PER_QUESTION if len(reqs) > int(entry.get("helpers_granted", 0) or 0) \
+                else WORKERS_PER_QUESTION
+
         plans: list[tuple[dict, int, int]] = []  # (entry, slot, total_slots)
         added: dict[str, int] = {}
         for e in entries:  # 第一轮:每道题先各给 1 个 agent
@@ -519,17 +565,27 @@ def spawn(env: dict) -> None:
             plans.append((e, 1, WORKERS_PER_QUESTION))
             added[qid] = 1
             free -= 1
-        for e in entries:  # 第二轮:有空位再给题目加派到上限
+        for e in entries:  # 第二轮:有空位再给题目加派(有增援请求的题可以加到 MAX_HELPERS)
             if free <= 0:
                 break
             qid = e["question_id"]
             taken = used_slots(qid) | {s for (x, s, _t) in plans if x["question_id"] == qid}
-            for slot in range(1, WORKERS_PER_QUESTION + 1):
+            cap = cap_for(e)
+            for slot in range(1, cap + 1):
                 if free <= 0:
                     break
                 if slot in taken:
                     continue
-                plans.append((e, slot, WORKERS_PER_QUESTION))
+                e2 = dict(e)
+                if cap > WORKERS_PER_QUESTION:      # 增援 worker:带上请求里的分工
+                    try:
+                        reqs = solver.read_helper_requests(e)
+                        idx = added.get(qid, 0)
+                        if idx < len(reqs):
+                            e2["squad_task"] = reqs[idx]
+                    except Exception:
+                        pass
+                plans.append((e2, slot, cap))
                 added[qid] = added.get(qid, 0) + 1
                 free -= 1
         for qid, n in added.items():
@@ -645,6 +701,11 @@ def launch_prepared(env: dict) -> None:
             if entry:
                 entry["attempts"] += 1        # 真正启动才计数;不限次数时不设上限
                 entry["worker_pid"] = proc.pid
+                if e.get("squad_task"):        # 增援 worker:记账,避免同一请求被反复满足
+                    entry["helpers_granted"] = int(entry.get("helpers_granted", 0) or 0) + 1
+                    board_mod.add_fact(b, "runner",
+                                       f"为 {entry.get('title', qid)} 增派 agent(第 {entry['helpers_granted']} 个):"
+                                       f"{e['squad_task'][:80]}")
         workers[f"{qid}#{slot}"] = {
             "proc": proc, "qid": qid, "slot": slot, "started": time.time(),
             "timeout": tm,

@@ -168,3 +168,29 @@ python3 tools/kb.py list / search "关键词" / show <方向> / grep "常量" / 
 - 计时:从点「开始跑」起 `ROUND_WINDOW_MINUTES=60`,或 `ROUND_END_AT=HH:MM`(优先);
   截止时间持久化、重启不重置、**过期即重新计时**(隔天启动不会卡死)。
 - 停机:`./start.sh stop` 会同时收掉 supervisor 与所有 agent(0 残留进程)。
+
+## 十七、PWN 效率优化(2026-09-13 诊断)
+
+- 阶段拆解显示浪费主要在**导航开销**(每条命令写超长绝对路径,占 28%)和**不会用已有的 libc-database**。
+- 已修:`knowledge/pwn.md` 增"libc 识别与本地复现(离线)"章节;prompt 对 pwn/reverse 追加"环境速查"
+  (pwn64 与 macOS 共享文件系统、全新 shell 的路径写法、`cd ~/libc-database && ./find puts <低3位>`、禁止在线识别)。
+- 效果:导航开销 28%→4.9%,打远程 6.5%→26.8%,单题 856~929s(4 次尝试)→**262s(1 次尝试)**。
+- 排查要点:若再出现类似"某方向不顺",先做**阶段占比统计**(recon/local/remote/写脚本/导航),别猜。
+
+## 十八、代理与熔断(2026-09-13 靶场复测后加固)
+
+- **模型端点永远绕过本机代理**:`solver._provider_hosts()` 从 `~/.pi/agent/models.json` 读当前 provider 的 baseUrl 主机,
+  加进 `no_proxy`;否则用户代理一失效(7877 无监听)模型请求就全挂(`Connection error.`)。
+  `NETWORK_MODE=local_only` 时才额外把其它出网指向黑洞 `127.0.0.1:9`。
+- `NETWORK_MODE`/`NET_ALLOW` 必须经 `env_config()` 传进 worker(曾漏传导致断网模式静默失效)。
+- **空跑熔断**:worker 0 工具调用即退出 → 累计退避(20s×n,上限 300s),连续 3 次写黑板警告;
+  `Connection error/ECONNREFUSED/fetch failed` 归为 `net` 类,退避重试且不算题目失败。
+- 排查口令:遇到"worker 起来了但什么都没干",先看 worker 日志尾部的 `errorMessage`,再看 `env_config` 是否漏键。
+
+## 十九、格攻击与 Coppersmith(2026-09-13 补齐)
+
+- pwn64 已装 **fpylll**(apt);**sage 装不了**。格攻击一律 `orb -m pwn64 bash -lc '...'`(macOS 本机无 fpylll,sympy 慢 2 倍)。
+- 自研工具 `tools/crypto/coppersmith.py`(部分密钥泄露 / 小根),512 位 n + 150 位未知约 1 分钟;pwn64 里跑。
+- 三个坑:首一化(乘 LC 模逆)、格第一族取 `i=0..m-1`(否则秩亏)、**别对格元素取模**(会算错)。
+- 慢任务用 `nohup ... &` 后台跑并写盘,避免被单题限时打断。
+- 靶场复测:6 题解出、rating 1432→1599(93.75%);pwn 样本 14 次调用/90 秒 vs 66 次调用(导航占 39%)两种画像。
