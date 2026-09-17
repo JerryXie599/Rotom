@@ -72,6 +72,23 @@ python3 config.py --test          # verify connectivity
 Or do it all in the web console. Networking defaults to **direct** (`NET_PROXY=direct`), immune to dead local proxies;
 OpenAI-compatible / Anthropic / Google API types are supported.
 
+## Platform notes (macOS / Windows / Linux)
+
+The harness itself is pure Python stdlib and works everywhere; model access needs the
+[pi CLI](https://github.com/earendil-works/pi). Challenges that require a Linux environment (pwn / web) run in
+[OrbStack](https://orbstack.dev) on macOS (`orb -m pwn64`, running amd64 binaries on arm64). Other platforms:
+
+| Platform | Linux environment |
+|---|---|
+| macOS (what this project is tested on) | OrbStack: `orb -m pwn64 bash -lc '...'` — shared filesystem, zero config; `timeout` is bundled |
+| Windows | WSL2: `wsl -d Ubuntu bash -lc '...'` — `apt install` the toolchain; GNU `timeout` is native |
+| Linux | run natively, drop the wrapper command |
+
+**To port**: replace the hardcoded `orb -m pwn64` with your platform's equivalent in three places — `solver.py`
+(two prompt blocks), `knowledge/pwn.md` (the playbook injected into prompts), and `start.sh` (dependency check);
+`tests/*.sh` also use orb to start local services, which real contests don't need. The cleaner approach is a
+`LINUX_VM_CMD` env var (macOS=`orb -m pwn64` / Windows=`wsl -d Ubuntu` / Linux=empty) referenced by the prompts.
+
 ## Offline knowledge base
 
 9000+ chunks, 0.2 s search: six hand-written playbooks + PayloadsAllTheThings + ctf-wiki + RsaCtfTool.

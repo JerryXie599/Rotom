@@ -67,6 +67,21 @@ python3 config.py --test          # 实测连通
 
 等价操作全在网页控制台。网络默认直连(`NET_PROXY=direct`),免疫本机失效代理;模型支持 OpenAI 兼容 / Anthropic / Google 四种 API 类型。
 
+## 平台说明(macOS / Windows / Linux)
+
+harness 本体是纯 Python 标准库,三平台通用;模型接入依赖 [pi CLI](https://github.com/earendil-works/pi)。
+pwn / web 这类需要 Linux 环境的题,本项目在 macOS 上用 [OrbStack](https://orbstack.dev)(`orb -m pwn64`,arm64 跑 amd64 二进制)。其它平台:
+
+| 平台 | Linux 环境方案 |
+|---|---|
+| macOS(本项目实测) | OrbStack:`orb -m pwn64 bash -lc '...'`,共享文件系统免配置;`timeout` 由 harness 内置 |
+| Windows | WSL2:`wsl -d Ubuntu bash -lc '...'`,工具链 `apt install`;GNU `timeout` 原生自带 |
+| Linux | 原生执行,去掉包装命令即可 |
+
+**移植方法**:把写死的 `orb -m pwn64` 换成你平台的等价命令,共三处——`solver.py`(agent 提示词两段)、
+`knowledge/pwn.md`(playbook,会注入 prompt)、`start.sh`(依赖体检);`tests/*.sh` 起本地服务也用了 orb,打真实比赛用不到。
+更优雅的做法是加一个 `LINUX_VM_CMD` 环境变量(macOS=`orb -m pwn64` / Windows=`wsl -d Ubuntu` / Linux=留空),提示词改为引用它。
+
 ## 离线知识库
 
 9000+ 段、检索 0.2s:六方向自写 playbook + PayloadsAllTheThings + ctf-wiki + RsaCtfTool。
