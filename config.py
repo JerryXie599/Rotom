@@ -14,7 +14,7 @@
   openai-responses     OpenAI Responses API
   google-generative-ai Google Generative AI
 
-改完写入 .env,并把 provider 同步进 ~/.pi/agent/models.json(provider 名固定为 "wqh"),
+改完写入 .env,并把 provider 同步进 ~/.pi/agent/models.json(provider 名固定为 "rotom"),
 harness 启动时也会自动同步一次,所以现场只要改 .env 或跑这个脚本即可。
 """
 
@@ -32,7 +32,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 ENV_PATH = ROOT / ".env"
 MODELS_JSON = Path.home() / ".pi" / "agent" / "models.json"
-PROVIDER_NAME = "wqh"
+PROVIDER_NAME = "rotom"
 
 API_TYPES = ("openai-completions", "anthropic-messages", "openai-responses", "google-generative-ai")
 
@@ -113,7 +113,7 @@ def mask(v: str) -> str:
 
 
 def sync_provider(cfg: dict, quiet: bool = False) -> bool:
-    """把 .env 里的模型配置写成 pi 的 provider 条目(models.json 里的 "wqh")。"""
+    """把 .env 里的模型配置写成 pi 的 provider 条目(models.json 里的 "rotom")。"""
     base_url, key, model = cfg.get("PI_BASE_URL", ""), cfg.get("PI_API_KEY", ""), cfg.get("PI_MODEL", "")
     api = cfg.get("PI_API_TYPE", "openai-completions") or "openai-completions"
     if not (base_url and model):

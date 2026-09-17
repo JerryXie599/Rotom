@@ -60,7 +60,7 @@ def _req(method: str, path: str, body: dict | None = None, timeout: int = DEFAUL
     req = urllib.request.Request(url, data=data, method=method, headers={
         "Authorization": f"Bearer {agent_token()}",
         "Content-Type": "application/json",
-        "User-Agent": "wqh-agent/1.0",
+        "User-Agent": "rotom-agent/1.0",
     })
     last: Exception | None = None
     for attempt in range(RETRIES):

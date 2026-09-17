@@ -1,4 +1,4 @@
-# wqh agent 架构与运行逻辑
+# Rotom 架构与运行逻辑
 
 > 湾区杯 AI 智能体解题赛(环节二/三)自动解题框架。**按一次「开始跑」后全程无人干预**:
 > 拉题 → 驱动大模型自主解题 → 校验并提交 flag → 平台对账 → 继续下一题,直到时间窗口结束。
@@ -77,7 +77,7 @@ sequenceDiagram
 
     U->>D: 填模型+接口 → 保存配置 → 测试模型/接口
     U->>D: 点「开始跑」
-    D->>R: 以 WQH_RUN_DIR=projects/&lt;项目&gt; 启动 runner(nohup + supervisor)
+    D->>R: 以 ROTOM_RUN_DIR=projects/&lt;项目&gt; 启动 runner(nohup + supervisor)
     R->>R: 解析截止时间(持久化 logs/run_deadline.json)
     loop 主循环(每 3~5 秒)
         R->>P: GET 查题
@@ -233,7 +233,7 @@ work/web-web01/
 ```
 logs/*.jsonl ──tools/export_trace.py──► traces/<题>_w<槽>.md + SUMMARY.md
                                            (Thought / Action / Observation 三段式)
-                └─tools/package_submission.py──► dist/wqh-agent-<项目>-<时间>.tar.gz
+                └─tools/package_submission.py──► dist/rotom-agent-<项目>-<时间>.tar.gz
                        内含:代码 + 合规 README(环境/配置/日志审计) + 脱敏 .env.example + traces
 ```
 

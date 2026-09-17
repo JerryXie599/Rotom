@@ -26,7 +26,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def default_run_dir() -> Path:
-    return Path(os.environ.get("WQH_RUN_DIR") or ROOT)
+    return Path(os.environ.get("ROTOM_RUN_DIR") or ROOT)
 
 
 def find_run_dir(project: str | None) -> Path:

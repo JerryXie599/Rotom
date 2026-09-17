@@ -150,7 +150,7 @@ def start_runner(project: str) -> str:
     st = runner_status(rundir)
     if st["running"]:
         return f"「{project}」的 runner 已在运行 (pid {st['pid']})"
-    env = {**os.environ, "WQH_RUN_DIR": str(rundir)}  # 数据目录指向本项目,项目之间互不干扰
+    env = {**os.environ, "ROTOM_RUN_DIR": str(rundir)}  # 数据目录指向本项目,项目之间互不干扰
     env.update({k: v for k, v in config_mod.read_env().items() if v != ""})
     (rundir / "logs").mkdir(parents=True, exist_ok=True)
     out = open(rundir / "logs" / "runner.out", "a", encoding="utf-8")
@@ -203,7 +203,7 @@ def save_config(payload: dict) -> str:
     mask = {k: ("***" if ("KEY" in k or "TOKEN" in k) else v) for k, v in updates.items()}
     msg = f"已保存: {mask}"
     if ok:
-        msg += "; 已同步到 pi provider(wqh)"
+        msg += "; 已同步到 pi provider(rotom)"
     else:
         msg += "; 未同步 provider(缺 base URL 或模型名)"
     running_projects = [pr["name"] for pr in list_projects()
@@ -256,12 +256,12 @@ def test_model() -> str:
         import json as _json
         mp = Path.home() / ".pi" / "agent" / "models.json"
         host = ((_json.loads(mp.read_text(encoding="utf-8")).get("providers") or {})
-                .get(cfg.get("PI_PROVIDER") or "wqh", {}).get("baseUrl") or "").split("//")[-1].split("/")[0].split(":")[0]
+                .get(cfg.get("PI_PROVIDER") or "rotom", {}).get("baseUrl") or "").split("//")[-1].split("/")[0].split(":")[0]
         if host:
             env["no_proxy"] = env["NO_PROXY"] = ((env.get("no_proxy") or "") + "," + host).strip(",")
     except Exception:
         pass
-    cmd = ["pi", "-p", "--provider", cfg.get("PI_PROVIDER") or "wqh", "--model", model,
+    cmd = ["pi", "-p", "--provider", cfg.get("PI_PROVIDER") or "rotom", "--model", model,
            "--no-session", "--no-extensions", "--no-skills", "--no-prompt-templates",
            "--no-context-files", "只回复两个字:正常"]
     try:
@@ -401,7 +401,7 @@ def build_state(project: str = DEFAULT_PROJECT) -> dict:
 PAGE = """<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>wqh agent 控制台</title>
+<title>Rotom 控制台</title>
 <style>
 /* ---- 设计 token:深色为默认,浅色为 body.light(点右上角按钮切换,选择记在 localStorage) ---- */
 :root{
@@ -567,7 +567,7 @@ td.q{font-family:inherit;font-size:12px;color:var(--text)}
   .split{grid-template-columns:1fr}.list{max-height:260px}}
 </style></head><body>
 <aside>
-  <div class="brand"><span class="dot"></span><span class="name">wqh agent 控制台</span></div>
+  <div class="brand"><span class="dot"></span><span class="name">Rotom 控制台</span></div>
   <nav>
     <div class="nav-item active" data-view="overview" onclick="go('overview')">
       <span class="ico">▤</span><span>总览</span></div>
@@ -667,7 +667,7 @@ td.q{font-family:inherit;font-size:12px;color:var(--text)}
         </div>
       </div>
       <div class="card" style="margin-bottom:14px">
-        <h2>模型配置 <span class="pill" id="prov_pill">provider wqh</span></h2>
+        <h2>模型配置 <span class="pill" id="prov_pill">provider rotom</span></h2>
         <div class="form">
           <div class="f"><label>Base URL</label>
             <input type="text" id="f_PI_BASE_URL" oninput="dirty=true"></div>
@@ -709,7 +709,7 @@ td.q{font-family:inherit;font-size:12px;color:var(--text)}
         </div>
         <div class="sect"><div class="lbl">说明</div>
           <div class="hint">
-            保存后会写入 <b>.env</b> 并自动同步成 pi 的 provider(<b>wqh</b>),命令行不用再动。<br>
+            保存后会写入 <b>.env</b> 并自动同步成 pi 的 provider(<b>rotom</b>),命令行不用再动。<br>
             <b>测试模型</b> 会用 pi 实跑一次确认连通;<b>停止</b> 会优雅收掉所有 agent(不留孤儿进程)。<br>
             模型/token 改动需点 <b>重启</b> 才生效。没有代理的环境直接留空代理相关设置即可,比赛接口始终直连。
           </div>
@@ -736,16 +736,16 @@ const FIELDS = ['TEAM_TOKEN','CONTEST_BASE','CONTEST_QUERY_PATH','CONTEST_RESET_
                 'PI_BASE_URL','PI_API_KEY','PI_MODEL','PI_API_TYPE','START_WORKERS','IGNORE_SOLVED','NET_PROXY'];
 const TITLES = {overview:'总览', control:'控制台', records:'记录'};
 let dirty = false, view = 'overview', filter = 'all', sel = null, state = null;
-let curProject = localStorage.getItem('wqh_project') || '默认项目';
+let curProject = localStorage.getItem('rotom_project') || '默认项目';
 
 function applyTheme(light){
   document.body.classList.toggle('light', light);
   const b = document.getElementById('themebtn');
   if (b) b.textContent = light ? '🌙 深色' : '☀️ 浅色';
-  localStorage.setItem('wqh_theme', light ? 'light' : 'dark');
+  localStorage.setItem('rotom_theme', light ? 'light' : 'dark');
 }
 function toggleTheme(){ applyTheme(!document.body.classList.contains('light')); }
-applyTheme(localStorage.getItem('wqh_theme') === 'light');
+applyTheme(localStorage.getItem('rotom_theme') === 'light');
 
 function go(v){
   view = v; sel = sel;
@@ -780,7 +780,7 @@ async function act(a){
   const r = await post('/api/runner', {action:a, project: curProject});
   m3.textContent = r.message; m3.className = r.ok ? '' : 'err'; tick();
 }
-function switchProject(name){ curProject = name; localStorage.setItem('wqh_project', name); sel = null; tick(); }
+function switchProject(name){ curProject = name; localStorage.setItem('rotom_project', name); sel = null; tick(); }
 async function createProject(){
   const el = document.getElementById('newproj');
   const name = (el.value || '').trim();

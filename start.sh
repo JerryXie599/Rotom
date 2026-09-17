@@ -117,7 +117,7 @@ if [ -n "${PI_BASE_URL:-}" ] && [ -n "${PI_MODEL:-}" ]; then
   python3 config.py --no-sync >/dev/null 2>&1   # 仅展示用,失败不阻塞
   ok "模型:${PI_MODEL}  (接口类型 ${PI_API_TYPE:-openai-completions})"
 else
-  warn "未配置 PI_BASE_URL/PI_MODEL,将使用 pi 里已有的 provider:${PI_PROVIDER:-wqh}"
+  warn "未配置 PI_BASE_URL/PI_MODEL,将使用 pi 里已有的 provider:${PI_PROVIDER:-rotom}"
 fi
 
 python3 - <<'PY' 2>/dev/null && ok "配置已同步到 pi provider" || warn "provider 同步跳过(不影响启动)"
@@ -195,9 +195,9 @@ fi
 python3 - <<'PY' 2>/dev/null || true
 import os, sys, json, signal
 sys.path.insert(0, ".")
-os.environ.setdefault("WQH_RUN_DIR", os.environ.get("WQH_RUN_DIR", ""))
+os.environ.setdefault("ROTOM_RUN_DIR", os.environ.get("ROTOM_RUN_DIR", ""))
 import subprocess, pathlib
-reg = pathlib.Path(os.environ.get("WQH_RUN_DIR") or ".", "logs", "workers.json")
+reg = pathlib.Path(os.environ.get("ROTOM_RUN_DIR") or ".", "logs", "workers.json")
 if reg.exists():
     try:
         for w in json.loads(reg.read_text()):
@@ -211,8 +211,8 @@ if reg.exists():
     reg.write_text("[]")
 PY
 
-export WQH_RUN_DIR="$RUN_DIR"
-export PI_PROVIDER="${PI_PROVIDER:-wqh}" PI_MODEL="${PI_MODEL:-}"
+export ROTOM_RUN_DIR="$RUN_DIR"
+export PI_PROVIDER="${PI_PROVIDER:-rotom}" PI_MODEL="${PI_MODEL:-}"
 [ -n "$WORKERS" ] && export START_WORKERS="$WORKERS"
 [ "$PRACTICE" = "1" ] && export IGNORE_SOLVED=1
 
@@ -242,7 +242,7 @@ fi
 
 DEADLINE_INFO=$(python3 - <<'PY' 2>/dev/null
 import json, time, pathlib, os
-f = pathlib.Path(os.environ.get("WQH_RUN_DIR") or ".", "logs", "run_deadline.json")
+f = pathlib.Path(os.environ.get("ROTOM_RUN_DIR") or ".", "logs", "run_deadline.json")
 if f.exists():
     try:
         dl = float(json.loads(f.read_text()).get("deadline") or 0)

@@ -17,9 +17,9 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-# 数据目录(黑板/工作区/日志)按项目隔离:每个项目一个目录,由 WQH_RUN_DIR 指定,
+# 数据目录(黑板/工作区/日志)按项目隔离:每个项目一个目录,由 ROTOM_RUN_DIR 指定,
 # 不设则用代码根目录(即"默认项目",兼容命令行单独运行)。
-RUN_DIR = Path(os.environ.get("WQH_RUN_DIR") or ROOT)
+RUN_DIR = Path(os.environ.get("ROTOM_RUN_DIR") or ROOT)
 BOARD_PATH = RUN_DIR / "board.json"
 LOCK_PATH = RUN_DIR / "board.lock"
 

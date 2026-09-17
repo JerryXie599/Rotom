@@ -28,3 +28,6 @@ __pycache__/
 *.pyc
 .DS_Store
 .kb_index.json
+
+# 测试运行日志
+tests/**/*.out

@@ -28,7 +28,7 @@ import threading
 import config as config_mod
 
 ROOT = Path(__file__).resolve().parent          # 代码位置(工具脚本在 ROOT/tools 下)
-RUN_DIR = Path(os.environ.get("WQH_RUN_DIR") or ROOT)  # 本项目的数据目录
+RUN_DIR = Path(os.environ.get("ROTOM_RUN_DIR") or ROOT)  # 本项目的数据目录
 WORK_DIR = RUN_DIR / "work"
 LOG_DIR = RUN_DIR / "logs"
 SUBMIT_TOOL = ROOT / "tools" / "submit_flag.py"
@@ -458,8 +458,8 @@ def launch(q: dict, slot: int, total: int, wdir: Path, env: dict,
         cmd, cwd=wdir, stdout=log_f, stderr=subprocess.STDOUT,
         env=child_env, start_new_session=True,  # 便于超时整组杀掉
     )
-    proc._wqh_log_f = log_f  # type: ignore[attr-defined]
-    proc._wqh_log_path = log_path  # type: ignore[attr-defined]
+    proc._agent_log_f = log_f  # type: ignore[attr-defined]
+    proc._agent_log_path = log_path  # type: ignore[attr-defined]
     return proc
 
 

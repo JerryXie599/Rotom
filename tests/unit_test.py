@@ -142,7 +142,7 @@ print("\n== 增援机制(子 agent 按需派发) ==")
 import shutil, tempfile as _tf  # noqa: E402
 _ws = Path(_tf.mkdtemp()) / "work" / "pwn-hard"
 _ws.mkdir(parents=True)
-os.environ["WQH_RUN_DIR"] = str(_ws.parent.parent)
+os.environ["ROTOM_RUN_DIR"] = str(_ws.parent.parent)
 importlib = __import__("importlib"); importlib.reload(solver)
 q_help = {"question_id": "H1", "title": "hard", "category": "pwn", "workdir": "pwn-hard"}
 (_ws / "SHARED.md").write_text(

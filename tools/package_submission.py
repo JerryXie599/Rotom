@@ -11,7 +11,7 @@
   python3 tools/package_submission.py --project round1
   python3 tools/package_submission.py --zip            # 额外产出 .zip
 
-产出: dist/wqh-agent-<项目>-<时间戳>.tar.gz
+产出: dist/rotom-agent-<项目>-<时间戳>.tar.gz
 包内: 代码 + README.md + RUNBOOK.md + traces/(审计轨迹) + .env.example(脱敏) + board.json
 """
 
@@ -74,7 +74,7 @@ def versions() -> dict:
 
 
 def readme_for_package(project: str, rundir: Path, v: dict) -> str:
-    return f"""# wqh 智能体部署包(湾区杯 AI 专项挑战赛 · 环节二/三)
+    return f"""# Rotom 智能体部署包(湾区杯 AI 专项挑战赛 · 环节二/三)
 
 本项目为 AI 智能体自动解题框架:通过比赛平台接口拉题 → 用 pi CLI 驱动大模型自主解题(可调用
 本机与本地虚拟机中的 CTF 工具链) → 拿到 flag 后自动提交,全程无人干预。
@@ -227,7 +227,7 @@ def archive(stage: Path, project: str, also_zip: bool) -> list[Path]:
     outdir = ROOT / "dist"
     outdir.mkdir(exist_ok=True)
     stamp = time.strftime("%Y%m%d-%H%M")
-    name = f"wqh-agent-{project}-{stamp}"
+    name = f"rotom-agent-{project}-{stamp}"
     made = []
     tgz = outdir / f"{name}.tar.gz"
     with tarfile.open(tgz, "w:gz") as tf:

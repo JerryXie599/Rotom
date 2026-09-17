@@ -58,7 +58,7 @@ class ContestError(RuntimeError):
 
 def _get(url: str, timeout: int = DEFAULT_TIMEOUT, **params) -> dict:
     url = url + ("&" if "?" in url else "?") + urllib.parse.urlencode(params)
-    req = urllib.request.Request(url, headers={"User-Agent": "wqh-agent/1.0"})
+    req = urllib.request.Request(url, headers={"User-Agent": "rotom-agent/1.0"})
     last: Exception | None = None
     for attempt in range(RETRIES):
         try:

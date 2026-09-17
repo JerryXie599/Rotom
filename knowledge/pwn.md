@@ -86,7 +86,7 @@ patchelf --set-interpreter ./ld-2.31.so --set-rpath . ./chall
 - **禁止联网识别**(`libc.rip` 等在线服务在比赛环境不可用)。
 
 ## 环境要点(省时间,实测踩坑)
-- **pwn64 与 macOS 共享同一文件系统**:工作区在 VM 里路径一样可见(如 `/Users/jerry/.../work/pwn-xxx/files/chall`),
+- **pwn64 与 macOS 共享同一文件系统**:工作区在 VM 里路径一样可见(如 `<项目根>/work/pwn-xxx/files/chall`),
   **不需要把二进制拷到 /tmp**;直接 `orb -m pwn64 bash -lc 'cd <工作区> && python3 exp.py'`。
 - 每条 bash 都是**全新 shell**:cwd 固定为你的工作目录;题目根目录用 `cd ..`,附件在 `../files/`(少写长绝对路径)。
 - 可用工具:`gdb`、`checksec`、`ROPgadget`、`ropper`、`patchelf`(无 pwndbg/gef、无 one_gadget;

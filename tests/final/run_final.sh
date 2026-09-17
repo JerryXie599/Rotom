@@ -31,7 +31,7 @@ qs = json.loads(pathlib.Path("tests/final/challenges.json").read_text())
 for q in qs:
     svc = q.get("service")
     if not svc: continue
-    wd, port, flag = f"/tmp/wqh_{q['id']}", svc["port"], q["flag"]
+    wd, port, flag = f"/tmp/rotom_{q['id']}", svc["port"], q["flag"]
     subprocess.run(["orb","-m","pwn64","bash","-lc",f"mkdir -p {wd}"], capture_output=True)
     with open(pathlib.Path("tests/final/files", svc["binary_local"]), "rb") as f:
         r = subprocess.run(["orb","-m","pwn64","bash","-lc",

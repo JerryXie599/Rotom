@@ -27,7 +27,7 @@ for c in data:
     binary = svc["binary"]           # VM 里的绝对路径
     port = svc["port"]
     flag = c["flag"]
-    workdir = f"/tmp/wqh_{c['id']}"
+    workdir = f"/tmp/rotom_{c['id']}"
     # 如果题目给了本地二进制,先拷进 VM(orb cp 不可用时退回 cat 管道)
     src = svc.get("binary_local")
     if src:
@@ -45,7 +45,7 @@ for c in data:
            f"for pid in $(ss -lntp 2>/dev/null | grep ':{port} ' | grep -o 'pid=[0-9]*' | cut -d= -f2 | sort -u); "
            f"do kill -9 $pid 2>/dev/null; done; sleep 0.2; "
            f"(setsid socat TCP-LISTEN:{port},reuseaddr,fork EXEC:"stdbuf -o0 {binary}",stderr "
-           f">/tmp/wqh_{c['id']}/socat.log 2>&1 &) ; sleep 0.5; "
+           f">/tmp/rotom_{c['id']}/socat.log 2>&1 &) ; sleep 0.5; "
            f"echo started_{port}")
     r = subprocess.run(["orb", "-m", vm, "bash", "-lc", cmd], capture_output=True, text=True)
     print(f"[pwn] {c['title']} :{port} -> {r.stdout.strip() or r.stderr.strip()[:120]}")
@@ -68,7 +68,7 @@ case "${1:-start}" in
     echo "== 3/3 启动 harness(独立项目目录 $RUN_DIR) =="
     pkill -f "runner.py" 2>/dev/null; sleep 1
     set -a; . ./.env; set +a
-    env WQH_RUN_DIR="$RUN_DIR" \
+    env ROTOM_RUN_DIR="$RUN_DIR" \
         ${MODEL_PROVIDER:+PI_PROVIDER=$MODEL_PROVIDER} ${MODEL_NAME:+PI_MODEL=$MODEL_NAME} \
         ${LOCAL_MODEL:+PI_PROVIDER=mac-local PI_MODEL=$LOCAL_MODEL} \
         CONTEST_BASE="http://127.0.0.1:$PORT" \

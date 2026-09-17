@@ -34,7 +34,7 @@ for q in qs:
     svc = q.get("service")
     if not svc:
         continue
-    wd, port, flag = f"/tmp/wqh_{q['id']}", svc["port"], q["flag"]
+    wd, port, flag = f"/tmp/rotom_{q['id']}", svc["port"], q["flag"]
     exec_part = "stdbuf -o0 ./pwn01_chall"
     subprocess.run(["orb", "-m", "pwn64", "bash", "-lc", f"mkdir -p {wd}"], capture_output=True)
     src = pathlib.Path("tests/load/files", svc["binary_local"])
@@ -61,7 +61,7 @@ head -2 tests/load/mock.out
 
 echo "== 3/3 启动 runner(并发 $N,窗口 30 分钟) =="
 set -a; . ./.env; set +a
-env WQH_RUN_DIR="$RUN_DIR" \
+env ROTOM_RUN_DIR="$RUN_DIR" \
     CONTEST_BASE="http://127.0.0.1:$PORT" \
     CONTEST_QUERY_PATH=/query CONTEST_RESET_PATH=/reset CONTEST_SUBMIT_PATH=/submit \
     START_WORKERS="$N" MIN_WORKERS=4 IGNORE_SOLVED=1 KEEP_RUNNING=0 \

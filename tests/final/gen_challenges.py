@@ -104,7 +104,7 @@ challenges = [
   {"id": "FINAL_PWN", "title": "pwn-ret2libc", "category": "pwn", "score": 500,
    "description": "64 位 ELF 栈溢出(附件含二进制与 libc)。服务端拿到 shell 后 flag 在 flag.txt。",
    "flag": FLAGS["pwn"], "file": "pwn01.zip",
-   "service": {"binary": "/tmp/wqh_FINAL_PWN/pwn01_chall", "binary_local": "pwn01_chall", "port": 19802},
+   "service": {"binary": "/tmp/rotom_FINAL_PWN/pwn01_chall", "binary_local": "pwn01_chall", "port": 19802},
    "connection": {"docker_url": "nc 192.168.139.136 19802", "docker_ip": "192.168.139.136", "docker_port": "19802"}},
   {"id": "FINAL_REV", "title": "reverse-xor", "category": "reverse", "score": 500,
    "description": "附件是一个校验口令的程序,passphrase 就是 flag。请逆向得到它。",

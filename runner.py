@@ -27,7 +27,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-RUN_DIR = Path(os.environ.get("WQH_RUN_DIR") or ROOT)
+RUN_DIR = Path(os.environ.get("ROTOM_RUN_DIR") or ROOT)
 sys.path.insert(0, str(ROOT))
 
 import board as board_mod  # noqa: E402
@@ -205,7 +205,7 @@ def _write_workers_json() -> None:
     """给看板(dashboard.py)用的 worker 注册表:谁在跑哪道题、日志在哪。"""
     data = [
         {"pid": w["proc"].pid, "qid": w["qid"], "slot": w["slot"],
-         "started": w["started"], "log": str(w["proc"]._wqh_log_path)}
+         "started": w["started"], "log": str(w["proc"]._agent_log_path)}
         for w in workers.values()
     ]
     tmp = WORKERS_JSON.with_suffix(".tmp")
@@ -281,7 +281,7 @@ def kill_worker(key: str, reason: str) -> None:
             pass
     finally:
         try:
-            proc._wqh_log_f.close()
+            proc._agent_log_f.close()
         except Exception:
             pass
     _write_workers_json()
@@ -340,8 +340,8 @@ def observe_shared() -> None:
     per_question: dict[str, list[str]] = {}
     for key, w in list(workers.items()):
         try:
-            summary = solver.recent_activity(w["proc"]._wqh_log_path, n=3)
-            tool_calls = solver.count_tool_calls(w["proc"]._wqh_log_path)
+            summary = solver.recent_activity(w["proc"]._agent_log_path, n=3)
+            tool_calls = solver.count_tool_calls(w["proc"]._agent_log_path)
         except Exception:
             continue
         # 走了很多步还没提交 → 往黑板写一条"去查知识库"的提醒(绕过模型自我判断,每 12 步提醒一次)
@@ -418,7 +418,7 @@ def inspect_failure(w: dict) -> str:
     proc = w["proc"]
     if proc.poll() is None and time.time() - w["started"] > w.get("timeout", WORKER_TIMEOUT):
         return "timeout"
-    return solver.classify_failure(proc._wqh_log_path) or f"exit={proc.poll()}"
+    return solver.classify_failure(proc._agent_log_path) or f"exit={proc.poll()}"
 
 
 def reap() -> None:
@@ -465,7 +465,7 @@ def reap() -> None:
                 continue
             # 空跑检测:起来了但一次工具都没调就退出 → 多半是环境/模型故障,退避并累计熔断
             try:
-                did_work = solver.count_tool_calls(w["proc"]._wqh_log_path) > 0
+                did_work = solver.count_tool_calls(w["proc"]._agent_log_path) > 0
             except Exception:
                 did_work = True
             if not did_work:
@@ -725,7 +725,7 @@ def prune_logs() -> None:
         return
     files = sorted(LOGS.glob("*.jsonl"), key=lambda p: p.stat().st_mtime)
     total = sum(f.stat().st_size for f in files)
-    live = {w["proc"]._wqh_log_path for w in workers.values()}
+    live = {w["proc"]._agent_log_path for w in workers.values()}
     removed = 0
     while total > MAX_LOG_MB * 1_000_000 and files:
         f = files.pop(0)

@@ -17,7 +17,7 @@ from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-RUN_DIR = Path(os.environ.get("WQH_RUN_DIR") or ROOT)
+RUN_DIR = Path(os.environ.get("ROTOM_RUN_DIR") or ROOT)
 
 
 def summarize(path: str, n: int) -> dict:

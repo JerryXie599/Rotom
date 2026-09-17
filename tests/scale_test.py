@@ -22,7 +22,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-TMP = Path(tempfile.mkdtemp(prefix="wqh-scale-"))
+TMP = Path(tempfile.mkdtemp(prefix="rotom-scale-"))
 os.environ["START_WORKERS"] = "6"
 os.environ["MIN_WORKERS"] = "1"
 os.environ["WORKERS_PER_QUESTION"] = "2"
@@ -52,8 +52,8 @@ class FakeProc:
     def __init__(self, pid: int, log_path: Path):
         self.pid = pid
         self.rc: int | None = None
-        self._wqh_log_path = log_path
-        self._wqh_log_f = open(log_path, "w", encoding="utf-8")
+        self._agent_log_path = log_path
+        self._agent_log_f = open(log_path, "w", encoding="utf-8")
 
     def poll(self):
         return self.rc

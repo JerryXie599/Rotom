@@ -8,7 +8,7 @@
   "flag": "flag{07570f15-6b52-4833-890a-f1872cbc89a1}",
   "file": "pwn01.zip",
   "service": {
-   "binary": "/tmp/wqh_LOADP00/pwn01_chall",
+   "binary": "/tmp/rotom_LOADP00/pwn01_chall",
    "binary_local": "pwn01_chall",
    "port": 19901
   },

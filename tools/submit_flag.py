@@ -37,7 +37,7 @@ _is_verdict = getattr(contest_api, "is_verdict", None) or (lambda r: True)
 _is_rate_limited = getattr(contest_api, "is_rate_limited", None) or (lambda r: False)
 
 # 日志必须落在**当前项目/靶场的数据目录**里,否则审计记录会散到全局 logs/
-RUN_DIR = Path(os.environ.get("WQH_RUN_DIR") or ROOT)
+RUN_DIR = Path(os.environ.get("ROTOM_RUN_DIR") or ROOT)
 LOG_DIR = RUN_DIR / "logs"
 
 

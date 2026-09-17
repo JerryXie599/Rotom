@@ -1,18 +1,18 @@
 ---
 name: wanqu-ctf-agent
-description: 操作 2026 湾区杯 AI 智能体解题赛(环节二/三)的自研 harness。适用于:启动或停止这个自动解题项目、改队伍 token 或模型配置、排查 runner/agent 不跑或跑得慢、看实时状态、给题目加知识库经验、按新版规定导出审计轨迹或打包交付、赛前用本地模拟比赛做压测。关键词:wqh_fromkimi、湾区杯、智能体解题赛、start.sh、dashboard、runner、SHARED.md、审计打包。
+description: 操作 2026 湾区杯 AI 智能体解题赛(环节二/三)的自研 harness。适用于:启动或停止这个自动解题项目、改队伍 token 或模型配置、排查 runner/agent 不跑或跑得慢、看实时状态、给题目加知识库经验、按新版规定导出审计轨迹或打包交付、赛前用本地模拟比赛做压测。关键词:Rotom、湾区杯、智能体解题赛、start.sh、dashboard、runner、SHARED.md、审计打包。
 ---
 
 # 湾区杯 AI 智能体解题赛 —— harness 操作手册
 
-项目位置固定为 `/Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi`(下称项目根)。
+项目根 = 本仓库的检出根目录(即 start.sh / runner.py 所在目录),下称「项目根」。
 比赛形式:**按一次「开始」后全程不再碰电脑**,agent 自动拉题→解题→提交;现场提供模型 key,
 现场**无外网**,所有参考资料必须已落盘。
 
 ## 一、最常用操作
 
 ```bash
-cd /Users/jerry/CTFmac/比赛/26湾区决赛/agent/wqh_fromkimi
+cd <项目根>
 ./start.sh                  # 一键:体检 → 起网页控制台 → 后台自动开跑(比赛当天就用这条)
 ./start.sh --check-only     # 只体检:token 长度 / 模型配置 / 接口连通性 / 工作区
 ./start.sh --practice       # 练习模式(平台已解出的题也重跑)
@@ -33,7 +33,7 @@ python3 config.py --base-url URL --key K --model M --api-type openai-completions
 python3 config.py --contest-base URL --contest-query-path /query --contest-reset-path /reset --contest-submit-path /submit
 python3 config.py --test                             # 用 pi 实跑一次验证模型连通
 ```
-- 配置全部落在 `.env`;**模型配置会自动同步成 pi 的 provider `wqh`**(不用手改 models.json)。
+- 配置全部落在 `.env`;**模型配置会自动同步成 pi 的 provider `rotom`**(不用手改 models.json)。
 - API 类型四选一:`openai-completions`(最通用)/`anthropic-messages`/`openai-responses`/`google-generative-ai`。
 - 比赛接口三个地址均可改:填相对路径(拼 `CONTEST_BASE`)或整条 URL(以 http 开头则原样使用)。
 
@@ -76,7 +76,7 @@ python3 config.py --test                             # 用 pi 实跑一次验证
 
 ```bash
 python3 tools/export_trace.py        # logs/*.jsonl → traces/*.md(Thought/Action/Observation 三段式)+ SUMMARY.md
-python3 tools/package_submission.py  # → dist/wqh-agent-<项目>-<时间>.tar.gz(含合规 README、脱敏 .env.example、traces)
+python3 tools/package_submission.py  # → dist/rotom-agent-<项目>-<时间>.tar.gz(含合规 README、脱敏 .env.example、traces)
 python3 tools/package_submission.py --zip            # 追加 .zip 格式
 ```
 审计对应关系:工具调用=`tool_execution_start`(Action)、工具输出=`toolResult`(Observation)、模型发言=`message_end`(Thought)。
@@ -163,7 +163,7 @@ python3 tools/kb.py list / search "关键词" / show <方向> / grep "常量" / 
 
 ## 十六、最终版(2026-09-13 定稿)
 
-- 模型:`deepseek-flash`(`https://api.deepseek.com/v1`,provider `wqh`)。
+- 模型:`deepseek-flash`(`https://api.deepseek.com/v1`,provider `rotom`)。
 - 启动:`./start.sh`(默认崩溃自动重启)或双击 `启动Agent.command`;`--check-only/status/stop/--practice/--project/--workers/--no-supervise`。
 - 计时:从点「开始跑」起 `ROUND_WINDOW_MINUTES=60`,或 `ROUND_END_AT=HH:MM`(优先);
   截止时间持久化、重启不重置、**过期即重新计时**(隔天启动不会卡死)。
