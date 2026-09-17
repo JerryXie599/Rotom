@@ -1,4 +1,16 @@
+<div align="center">
+
+<img src="docs/logo.png" alt="Rotom — CTF AI Agent System" width="360"/>
+
 # Rotom ⚡
+
+**自动化 CTF 答题 Agent —— 潜入哪类题,就长成解决它的形状**
+
+[简体中文](README.md) · [English](README.en.md)
+
+</div>
+
+---
 
 > 「它会用由离子构成的身体潜入各种各样的机器里,最喜欢将其作为躯体。」
 > —— [神奇宝贝百科 · 洛托姆](https://wiki.52poke.com/wiki/%E6%B4%9B%E6%89%98%E5%A7%86)
