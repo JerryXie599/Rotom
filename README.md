@@ -92,6 +92,10 @@ playbook 注入 prompt、卡住强制查、重试自动投喂——四层保证�
 
 `tools/export_trace.py` 导出 Thought/Action/Observation 轨迹;`tools/package_submission.py` 一键打包部署包(自动脱敏,含合规 README)。
 
+## 使用许可
+
+欢迎 **Fork 与魔改**;**商用请联系作者**:1054544881@qq.com
+
 ## 致谢
 
 [Cairn](https://github.com/oritera/Cairn)(架构) · [pi](https://github.com/earendil-works/pi)(运行时) ·

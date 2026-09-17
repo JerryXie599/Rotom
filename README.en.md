@@ -99,6 +99,10 @@ challenge release) · `tools/status_now.py` one-screen status · `tools/round_wa
 `tools/export_trace.py` exports readable Thought/Action/Observation traces; `tools/package_submission.py` packages the
 deployment bundle (auto-redacted, compliant README included).
 
+## License
+
+**Fork and modify freely**; for **commercial use**, contact the author: 1054544881@qq.com
+
 ## Acknowledgements
 
 [Cairn](https://github.com/oritera/Cairn) (architecture) · [pi](https://github.com/earendil-works/pi) (runtime) ·
