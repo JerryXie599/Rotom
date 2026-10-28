@@ -1,6 +1,9 @@
 <div align="center">
 
-<img src="docs/logo.png" alt="Rotom — CTF AI Agent System" width="360"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/logo-dark.png">
+  <img src="docs/logo.png" alt="Rotom — CTF AI Agent System" width="420"/>
+</picture>
 
 # Rotom ⚡
 
