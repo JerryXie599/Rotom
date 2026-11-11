@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""统一配置入口:改 token、改模型(base URL / key / 模型名 / API 类型),并可一键测通。
+"""统一配置入口:改跑分平台凭证、改模型(base URL / key / 模型名 / API 类型),并可一键测通。
 
 用法:
   python3 config.py                                  # 查看当前配置
-  python3 config.py --token icqXXXX                  # 只改队伍 token
+  python3 config.py --benchmark-url https://xxx --benchmark-token <UUID>   # 跑分平台
   python3 config.py --base-url https://api.xxx/v1 --key sk-xxx \
                     --model deepseek-v4-flash --api-type openai-completions
+  python3 config.py --vpn                            # 靶场 VPN 联通预检
   python3 config.py --test                           # 用 pi 实际跑一次,验证模型连通
 
 --api-type 可选(对应 pi 的 provider api 类型):
@@ -37,17 +38,33 @@ PROVIDER_NAME = "rotom"
 API_TYPES = ("openai-completions", "anthropic-messages", "openai-responses", "google-generative-ai")
 
 DEFAULTS = {
+    # 策略包(见 profiles/*.json 与 docs/PROFILES.md):
+    #   zhongce = 众测/跑分平台(本仓库默认);ctf = CTF 比赛;pentest = 正式渗透(目标来自 targets.json)
+    "PROFILE": "zhongce",
+    # 平台适配器:tsec = TSec Benchmark(容器自开自关 + 一题多 flag);
+    # 留空 = 原 CTF 平台(contest_api);arena = NSSCTF Agent Arena
+    # (PROFILE=pentest 时本项被忽略:任务源是本地 targets.json)
+    "CONTEST_ADAPTER": "tsec",
+    # ---- 跑分平台(创建跑分任务后由平台下发)----
+    "BENCHMARK_BASE_URL": "",
+    "BENCHMARK_TOKEN": "",
+    "VPN_CHECK_URL": "http://10.0.100.58",      # 靶场 VPN 联通预检地址(只在 VPN 内可达)
+    # 兼容旧字段(切回 CTF 适配器时才用)
     "TEAM_TOKEN": "",
-    # 比赛接口地址:现场若改域名/路径,只改这几项即可(留空则用内置默认值)
     "CONTEST_BASE": "https://apiterminator.ichunqiu.com",
     "CONTEST_QUERY_PATH": "/04cb510e425bd8f64fa97ba66f3935e1",
     "CONTEST_RESET_PATH": "/deed3dba39e57b7cf95ea63ddd84e0c8",
     "CONTEST_SUBMIT_PATH": "/ff874ef3172cbf4fd6ec2c5653a568e2",
+    # ---- 模型 ----
     "PI_PROVIDER": PROVIDER_NAME,
     "PI_BASE_URL": "",
     "PI_API_KEY": "",
     "PI_MODEL": "",
     "PI_API_TYPE": "openai-completions",
+    # ---- 容器名额与节奏(众测平台同时最多 3 道题的容器)----
+    "MAX_ACTIVE_CHALLENGES": "3",
+    "QUESTION_SLICE_SECONDS": "1800",
+    "ROTATE_COOLDOWN": "60",
     # 网络:direct=直连(忽略本机代理变量,默认);system=沿用系统 http_proxy 等设置
     "NET_PROXY": "direct",
 }
@@ -66,13 +83,37 @@ def apply_net_policy(child_env: dict, cfg: dict | None = None) -> str:
     """
     cfg = cfg or {}
     mode = (cfg.get("NET_PROXY") or os.environ.get("NET_PROXY") or "direct").strip() or "direct"
+    local_only = (cfg.get("NETWORK_MODE") or os.environ.get("NETWORK_MODE")) == "local_only"
     if mode == "direct":
         for k in PROXY_KEYS:
             child_env.pop(k, None)
-    if (cfg.get("NETWORK_MODE") or os.environ.get("NETWORK_MODE")) == "local_only":
+        # 系统级免疫:macOS 的**系统代理**(scutil --proxy,不是环境变量)会被 python requests 自动继承,
+        # 打 10.x 靶场会莫名 502(2026-09-28 第三次测试实测踩到,当时靠手工 trust_env=False 绕过)。
+        # 设 no_proxy=* 时 urllib/requests/curl 都判定"全部直连",连系统代理设置一起绕开。
+        # ⚠ 断网模式(local_only)例外:那里靠"黑洞代理 + no_proxy 白名单"实现隔离,设 * 会把隔离打穿。
+        if not local_only:
+            child_env["no_proxy"] = child_env["NO_PROXY"] = "*"
+    if local_only:
         for k in PROXY_KEYS:
             child_env[k] = "http://127.0.0.1:9"
     return mode
+
+
+def adapter_name() -> str:
+    """当前平台适配器(tsec / arena / 空=原 CTF 平台)。**环境变量 → .env 文件 → 空**。
+
+    为什么要这个函数:worker 里的工具(tools/submit_flag.py 等)以前只看 os.environ ——
+    托管容器里如果 .env 没被导出到环境,就会**静默回退**到 CTF 适配器(旧域名 apiterminator),
+    提交全部被拒(第六次 Docker 测试实测:4 小时 40 分、250+ 次提交全废)。读 .env 之后,
+    即使环境没导出也选得对;真选不出来时交给调用方显式报错,不再静默猜。
+    """
+    v = (os.environ.get("CONTEST_ADAPTER") or "").strip()
+    if not v:
+        try:
+            v = (read_env().get("CONTEST_ADAPTER") or "").strip()
+        except Exception:                                       # noqa: BLE001
+            v = ""
+    return v.lower()
 
 
 def read_env() -> dict:
@@ -155,6 +196,7 @@ def sync_provider(cfg: dict, quiet: bool = False) -> bool:
         for old in sorted(MODELS_JSON.parent.glob("models.json.bak-*"))[:-3]:
             old.unlink(missing_ok=True)  # 只保留最近 3 份备份
     providers[PROVIDER_NAME] = entry
+    MODELS_JSON.parent.mkdir(parents=True, exist_ok=True)   # 全新环境(容器)里 ~/.pi/agent 还不存在,写之前先建
     MODELS_JSON.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
     if not quiet:
         print(f"已同步 provider '{PROVIDER_NAME}' -> {MODELS_JSON}")
@@ -190,42 +232,103 @@ def test_model(cfg: dict) -> int:
     return 1
 
 
+def test_vpn(cfg: dict) -> int:
+    """靶场 VPN 联通预检:GET <VPN_CHECK_URL> 必须返回 {"status":"ok"}。
+
+    这是整个跑分流程的强制前置 —— 题目入口地址只在 VPN 内可达。
+    """
+    import urllib.request
+    url = (cfg.get("VPN_CHECK_URL") or "http://10.0.100.58").strip()
+    print(f"VPN 预检:GET {url}")
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "rotom-agent/1.0"})
+        opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))   # 直连,不走本机代理
+        with opener.open(req, timeout=8) as resp:
+            raw = resp.read().decode("utf-8", "ignore")
+    except Exception as e:
+        print(f"  ✘ 不可达:{type(e).__name__}: {e}")
+        print("  → 说明 VPN 没连上(或刚断开)。连上靶场 VPN 后再试;本机没装 openvpn 时见 README「VPN」一节。")
+        return 1
+    print(f"  原始响应:{raw[:200]}")
+    try:
+        data = json.loads(raw)
+    except Exception:
+        print("  ✘ 响应不是 JSON,可能被网关/代理劫持")
+        return 1
+    if str(data.get("status", "")).lower() == "ok":
+        print(f"  ✔ VPN 已连通(client_ip={data.get('client_ip')})")
+        return 0
+    print("  ✘ status 不是 ok —— VPN 未真正连通")
+    return 1
+
+
 def show(cfg: dict) -> None:
     print(f"配置文件: {ENV_PATH}")
-    print(f"  TEAM_TOKEN   = {mask(cfg.get('TEAM_TOKEN', ''))}")
+    try:
+        import profile as profile_mod
+        prof = profile_mod.load((cfg.get("PROFILE") or "").strip() or None)
+        print(f"  策略包       = {prof.name} · {prof.title}")
+        print(f"    {prof.get('description') or ''}")
+        print(f"    目标记账 = {prof.goal}   容器策略 = "
+              f"manage:{prof.get('containers.manage')} rotate:{prof.get('containers.rotate')} "
+              f"vpn_gate:{prof.get('containers.vpn_gate')}")
+    except Exception as e:
+        print(f"  策略包       = (读取失败: {e})")
+    print(f"  平台适配器   = {cfg.get('CONTEST_ADAPTER') or 'contest(原 CTF 平台)'}")
+    print("跑分平台(TSec Benchmark):")
+    print(f"  BENCHMARK_BASE_URL = {cfg.get('BENCHMARK_BASE_URL') or '(未设置)'}")
+    print(f"  BENCHMARK_TOKEN    = {mask(cfg.get('BENCHMARK_TOKEN', ''))}")
+    print(f"  VPN_CHECK_URL      = {cfg.get('VPN_CHECK_URL') or '(默认 http://10.0.100.58)'}")
+    print("模型:")
     print(f"  PI_PROVIDER  = {cfg.get('PI_PROVIDER', PROVIDER_NAME)}")
     print(f"  PI_BASE_URL  = {cfg.get('PI_BASE_URL') or '(未设置,用 models.json 里已有 provider)'}")
     print(f"  PI_API_KEY   = {mask(cfg.get('PI_API_KEY', ''))}")
     print(f"  PI_MODEL     = {cfg.get('PI_MODEL') or '(未设置)'}")
     print(f"  PI_API_TYPE  = {cfg.get('PI_API_TYPE', '')}")
-    print("比赛接口:")
-    print(f"  CONTEST_BASE        = {cfg.get('CONTEST_BASE') or '(默认)'}")
-    print(f"  CONTEST_QUERY_PATH  = {cfg.get('CONTEST_QUERY_PATH') or '(默认)'}")
-    print(f"  CONTEST_RESET_PATH  = {cfg.get('CONTEST_RESET_PATH') or '(默认)'}")
-    print(f"  CONTEST_SUBMIT_PATH = {cfg.get('CONTEST_SUBMIT_PATH') or '(默认)'}")
+    print("容器名额:")
+    print(f"  MAX_ACTIVE_CHALLENGES = {cfg.get('MAX_ACTIVE_CHALLENGES') or 3}(平台硬上限 3)")
+    print(f"  QUESTION_SLICE_SECONDS = {cfg.get('QUESTION_SLICE_SECONDS') or 0}(0=不轮换)")
     print(f"  (可选)PI_API_KEY_VAR = {cfg.get('PI_API_KEY_VAR') or '(未设置)'}")
-    print("\n并发/模式等其它参数见 .env")
+    print("\n并发/超时等其它参数见 .env")
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="统一配置入口(改完自动同步到 pi)")
-    ap.add_argument("--token", help="比赛队伍 token")
+    ap.add_argument("--benchmark-url", help="跑分平台 BASE_URL(创建跑分任务时下发)")
+    ap.add_argument("--benchmark-token", help="跑分平台 BENCHMARK_TOKEN(UUID)")
+    ap.add_argument("--vpn-check-url", help="VPN 预检地址(默认 http://10.0.100.58)")
+    ap.add_argument("--adapter", help="平台适配器:tsec(众测)/arena(靶场)/留空(原 CTF 平台)")
+    ap.add_argument("--profile", help="策略包:zhongce(众测)/ctf(CTF 比赛)/pentest(正式渗透)")
+    ap.add_argument("--token", help="兼容:等同 --benchmark-token")
     ap.add_argument("--base-url", help="模型 API base URL,例如 https://api.xxx/v1")
     ap.add_argument("--key", help="模型 API key")
     ap.add_argument("--model", help="模型名字")
     ap.add_argument("--api-type", choices=API_TYPES, help="API 类型")
     ap.add_argument("--provider", help=f"provider 名(默认 {PROVIDER_NAME})")
-    ap.add_argument("--contest-base", help="比赛接口域名,如 https://apiterminator.ichunqiu.com")
-    ap.add_argument("--contest-query-path", help="查题接口路径(或整条 URL)")
-    ap.add_argument("--contest-reset-path", help="重置环境接口路径(或整条 URL)")
-    ap.add_argument("--contest-submit-path", help="提交 flag 接口路径(或整条 URL)")
     ap.add_argument("--test", action="store_true", help="用 pi 实测模型连通性")
+    ap.add_argument("--vpn", action="store_true", help="靶场 VPN 联通预检")
     ap.add_argument("--no-sync", action="store_true", help="只改 .env,不写 models.json")
     args = ap.parse_args()
 
     updates = {}
-    if args.token:
-        updates["TEAM_TOKEN"] = args.token.strip()
+    if args.benchmark_url:
+        updates["BENCHMARK_BASE_URL"] = args.benchmark_url.strip().rstrip("/")
+    for tok in (args.benchmark_token, args.token):
+        if tok:
+            updates["BENCHMARK_TOKEN"] = tok.strip()
+    if args.vpn_check_url:
+        updates["VPN_CHECK_URL"] = args.vpn_check_url.strip()
+    if args.adapter:
+        updates["CONTEST_ADAPTER"] = args.adapter.strip().lower()
+    if args.profile:
+        name = args.profile.strip().lower()
+        try:                                     # 写之前先确认策略包真的存在,别把 .env 写坏
+            import profile as profile_mod
+            profile_mod.load(name)
+        except Exception as e:
+            print(f"策略包不存在或不可用({name}): {e}")
+            return 2
+        updates["PROFILE"] = name
     if args.base_url:
         updates["PI_BASE_URL"] = args.base_url.strip().rstrip("/")
     if args.key:
@@ -236,13 +339,6 @@ def main() -> int:
         updates["PI_API_TYPE"] = args.api_type
     if args.provider:
         updates["PI_PROVIDER"] = args.provider.strip()
-    for flag, key in (("contest_base", "CONTEST_BASE"),
-                      ("contest_query_path", "CONTEST_QUERY_PATH"),
-                      ("contest_reset_path", "CONTEST_RESET_PATH"),
-                      ("contest_submit_path", "CONTEST_SUBMIT_PATH")):
-        v = getattr(args, flag)
-        if v:
-            updates[key] = v.strip()
 
     if updates:
         write_env(updates)
@@ -251,6 +347,8 @@ def main() -> int:
     cfg = {**DEFAULTS, **read_env()}
     if updates and not args.no_sync:
         sync_provider(cfg)
+    if args.vpn:
+        return test_vpn(cfg)
     if args.test:
         if not args.no_sync:
             sync_provider(cfg, quiet=True)

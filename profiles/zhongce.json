@@ -1,0 +1,80 @@
+{
+  "name": "zhongce",
+  "title": "众测 / 跑分平台",
+  "description": "众测跑分(TSec 一类):一题多 flag;容器由 harness 自开自关(平台名额上限 3)。循环按'任务驱动':只有四种终止条件(全部完成/平台不可恢复/网络连续失败/token 无效),不以时间点为界;链式题钉住名额+长会话,其余题广度并行;同题默认 1 个 agent(把'调度者=解题者'的收益拿过来,需要人手再走增援通道)。 支持 kb_extra:把上一轮的逐题战果目录挂进知识库,动手前先查本题号 —— 实测这是跨轮最大杠杆。",
+  "goal": "flags",
+  "prompt_pack": "zhongce",
+  "adapter": "tsec",
+  "connection_style": "container",
+  "default_env_hint": "pentest",
+  "dispatch": {
+    "workers_per_question": 1,
+    "max_helpers": 3,
+    "endgame": {
+      "enabled": true,
+      "unsolved_lte": 5,
+      "after_running_s": 600,
+      "brief": "你被自动派来的**补位 agent**(收尾期加派,不是新人手从头开始):先读黑板和『已排除 / 已证伪清单』,然后挑一个**与现有队友不同**的攻击面开打 —— 端口、端点、漏洞类型三个维度都避开队友已经试过的;不要重复任何已证死的路径。**这题已经烧掉大量时间且仍是 0 分:先取平台提示**(`python3 tools/get_hint.py <题号>` —— 即使按 10% 扣分,也比 0 分强),再按提示走最短路径。每 3~5 步往黑板写一行结论(只写事实,别写过程)。"
+    }
+  },
+  "observer": {
+    "mode": "progress",
+    "stall_s": 900,
+    "repeat_sig": 3,
+    "cooldown_s": 900,
+    "max_per_question": 3
+  },
+  "containers": {
+    "manage": true,
+    "rotate": true,
+    "vpn_gate": false,
+    "health": {
+      "enabled": true,
+      "probe_interval_s": 90,
+      "fail_threshold": 3,
+      "tcp_timeout_s": 3,
+      "http_timeout_s": 6,
+      "max_heal_per_question": 3,
+      "heal_cooldown_s": 240
+    }
+  },
+  "playbooks": {
+    "pentest": "pentest.md",
+    "web": "web.md",
+    "pwn": "pwn.md",
+    "reverse": "reverse.md",
+    "re": "reverse.md",
+    "crypto": "crypto.md",
+    "forensics": "forensics.md",
+    "misc": "misc.md",
+    "取证": "forensics.md",
+    "逆向": "reverse.md",
+    "密码": "crypto.md"
+  },
+  "system_prompt": "shared/system-ctf.md",
+  "loop": {
+    "mode": "work",
+    "stop": [
+      "goal_done",
+      "platform_dead",
+      "net_gone",
+      "token_bad"
+    ],
+    "prompt_time_budget": false
+  },
+  "budgets": {
+    "by_difficulty": {
+      "easy": 1800,
+      "medium": 3600,
+      "hard": 7200
+    },
+    "chain": {
+      "flag_count_gte": 3,
+      "session_s": 10800,
+      "pin_slot": true,
+      "max_attempts": 4,
+      "max_pinned_slots": 1
+    }
+  },
+  "kb_extra": []
+}

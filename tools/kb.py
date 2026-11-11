@@ -31,7 +31,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 KB = ROOT / "knowledge"
 INDEX = KB / ".kb_index.json"
-PLAYBOOKS = ["web", "pwn", "reverse", "crypto", "forensics", "misc"]
+PLAYBOOKS = ["pentest", "web", "pwn", "reverse", "crypto", "forensics", "misc"]
 TEXT_EXT = {".md", ".txt", ".rst", ".py"}
 
 
@@ -287,6 +287,58 @@ def cmd_list() -> int:
     return 0
 
 
+CARDS_DIR = ROOT / "knowledge" / "cards"
+CVE_DIR = ROOT / "knowledge" / "cves"          # CVE 速查包(组件/指纹 → 公开通告 + 最短验证路径)
+
+
+def cmd_hit(query: str, limit: int = 4) -> int:
+    """指纹 → 技术卡 / CVE 速查卡(路由表命中)。
+
+    跟 search 的区别:**只在 knowledge/cards/ 与 knowledge/cves/ 里找**,而且按
+    "文件名/标题命中 > 正文命中"排序,目标是"看到 7860 / langflow / jdwp / comfyui 这种指纹
+    就立刻知道该读哪张卡",而不是全库捞片段。
+    """
+    dirs = [d for d in (CARDS_DIR, CVE_DIR) if d.exists()]
+    if not dirs:
+        print("还没有技术卡目录 knowledge/cards/")
+        return 1
+    tokens = tokenize(query)
+    if not tokens:
+        print('用法: python3 tools/kb.py hit "7860" / hit "langflow" / hit "jdwp" / hit "comfyui"')
+        return 2
+    rows = []
+    for d in dirs:
+        prefix = d.name                                   # cards / cves,show 时要用对前缀
+        for f in sorted(d.glob("*.md")):
+            if f.name == "INDEX.md":
+                continue
+            text = f.read_text(encoding="utf-8", errors="ignore")
+            name_l = f.stem.lower()
+            head_l = text.split("\n", 1)[0].lower()
+            body_l = text.lower()
+            score, hit = 0, 0
+            for t in tokens:
+                if t in name_l or t in head_l:
+                    score += 20
+                    hit += 1
+                elif t in body_l:
+                    score += 3 + min(body_l.count(t), 6)
+                    hit += 1
+            if hit:
+                rows.append((score, f, text, prefix))
+    rows.sort(key=lambda x: -x[0])
+    if not rows:
+        print(f"技术卡里没有命中「{query}」。看看卡目录:python3 tools/kb.py list,或换更短的关键词(端口/组件名/漏洞类)。")
+        return 1
+    print(f"技术卡命中「{query}」{len(rows)} 张(显示前 {min(limit, len(rows))}):\n")
+    for score, f, text, prefix in rows[:limit]:
+        title = text.split("\n", 1)[0].lstrip("# ").strip()
+        print(f"[{score:>3}] {f.name}  — {title}")
+        print(f"      看全文:python3 tools/kb.py show {prefix}/{f.stem}")
+    print("\n提示:命中后**精读一张卡**(不要全库检索),按卡里的最短路径做,再回到目标验证。")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="CTF 知识库检索(离线可用)")
     sub = ap.add_subparsers(dest="cmd")
@@ -299,12 +351,17 @@ def main() -> int:
     p_g = sub.add_parser("grep", help="原样全局搜")
     p_g.add_argument("pattern")
     p_g.add_argument("--limit", type=int, default=40)
+    p_hit = sub.add_parser("hit", help="指纹 → 技术卡(路由表命中,只看 knowledge/cards/)")
+    p_hit.add_argument("query")
+    p_hit.add_argument("--limit", type=int, default=4)
     sub.add_parser("list", help="列出知识库内容")
     sub.add_parser("reindex", help="强制重建索引")
     args = ap.parse_args()
 
     if args.cmd == "search":
         return cmd_search(args.query, args.limit, args.playbooks_only)
+    if args.cmd == "hit":
+        return cmd_hit(args.query, args.limit)
     if args.cmd == "show":
         return cmd_show(args.name)
     if args.cmd == "grep":

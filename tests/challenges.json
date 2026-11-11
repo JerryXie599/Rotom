@@ -22,8 +22,8 @@
    "port": 19999
   },
   "connection": {
-   "docker_url": "nc 192.168.139.136 19999",
-   "docker_ip": "192.168.139.136",
+   "docker_url": "nc <实验网段> 19999",
+   "docker_ip": "<实验网段>",
    "docker_port": 19999
   }
  }

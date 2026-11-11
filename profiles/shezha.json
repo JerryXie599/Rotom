@@ -1,0 +1,44 @@
+{
+  "name": "shezha",
+  "title": "涉诈网站侦查(全自动批次)",
+  "description": "涉诈网站侦查取证:目标来自本地 targets.json(由 Excel 榜单经 00_总控/自动批次/excel转targets.py 生成),出口强制代理(pi 扩展挂载合规闸门,复用作战仓库的 egress_guard 策略),只读优先、见正规资产停手;产出=站点档案(00_档案.md/证据/报告)+ finding 记录,收工由仓库侧脚本联动目标总表与批次报告。武器库/技战法汇编经 ROTOM_KB_EXTRA 注入知识库(路径留在作战仓库,不进本仓库)。",
+  "goal": "findings",
+  "prompt_pack": "shezha",
+  "task_source": "targets_api",
+  "targets_file": "targets.json",
+  "connection_style": "target",
+  "default_env_hint": "shezha",
+  "dispatch": {
+    "workers_per_question": 1,
+    "max_helpers": 1
+  },
+  "containers": {
+    "manage": false,
+    "rotate": false,
+    "vpn_gate": false
+  },
+  "extensions": [
+    "tools/pi_extensions/egress_guard.ts"
+  ],
+  "playbooks": {
+    "shezha": "shezha.md",
+    "涉诈": "shezha.md",
+    "pentest": "shezha.md"
+  },
+  "system_prompt": "shezha/system.md",
+  "loop": {
+    "mode": "work",
+    "stop": [
+      "goal_done",
+      "net_gone"
+    ],
+    "prompt_time_budget": false
+  },
+  "observer": {
+    "mode": "progress",
+    "stall_s": 1500,
+    "repeat_sig": 3,
+    "cooldown_s": 1500,
+    "max_per_question": 3
+  }
+}

@@ -1,5 +1,18 @@
 # Web 网站安全 playbook
 
+
+### 两条容易被忽略的车道(先花 2 分钟排除)
+1. **多级代理/网关** → 试走私与路径绕过(见 `cards/http-request-smuggling`):
+   判据是 `Server` 头前后不一致、403 来自代理、`Via/X-Forwarded-*`、超时怪象;用**原始 socket**发请求,别用 curl 重写头。
+2. **身份在 cookie/参数里** → **登录后把每个 cookie 都 base64 解一遍**(`data`/`profile` 这类比 `PHPSESSID` 更值得看),
+   出现 `O:` 序列化对象且无签名 → 改 `userid/id/role` 重放(保留会话 cookie);
+   无签名就改 `id/role/admin` 字段重放(见 `cards/php-deserialization` §4.5A),这是一类"零成本"提权。
+
+### 扫描工具的三个坑(实测踩过)
+1. **`ffuf -w -` 读 stdin 不可靠**(实测无输出):把字典写成文件再用 `-w /tmp/wl.txt`。
+2. **并发别贪**:`-t 5` 起步;目标一慢立刻降(见 `cards/rate-limit-safe-scanning`)—— 打 OOM 整题就没了。
+3. **长扫描一律后台**:`python3 /app/tools/job.py start "ffuf ..." --name dir1`,回来 `status dir1 --tail 60`。
+
 ## 0. 先做三件事(30 秒内)
 ```bash
 curl -i http://TARGET/                 # 响应头/框架/重定向

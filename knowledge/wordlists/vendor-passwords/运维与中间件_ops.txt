@@ -1,0 +1,111 @@
+# 运维与中间件 —— 厂商定向弱口令表
+#
+# aliases: 运维,中间件,ops,面板,tomcat,weblogic,jboss,websphere,jenkins,gitlab,nacos,
+#          zabbix,grafana,jumpserver,harbor,minio,nexus,sonarqube,数据库,mysql,postgres,redis,mongo,elastic
+#
+# 口径:公开流通的组件默认口令/弱配置;不含任何题号绑定的信息。
+# 用法:拿到指纹(端口/响应头/页面 title)后只取对应那一段,不要整表轰 ——
+#       这些组件的爆破通常有账号锁定,而它们的默认值在"产品默认"这一小段里。
+
+# === Tomcat ===
+tomcat
+Tomcat@123
+tomcat123
+# === WebLogic ===
+weblogic
+Weblogic@123
+weblogic123
+WebLogic123
+# === JBoss ===
+jboss
+Jboss@123
+jboss123
+# === WebSphere ===
+websphere
+Websphere@123
+# === Jenkins ===
+jenkins
+Jenkins@123
+jenkins123
+# === GitLab ===
+gitlab
+Gitlab@123
+# === Nacos ===
+nacos
+Nacos@123
+nacos123
+# === Zabbix ===
+zabbix
+Zabbix@123
+zabbix123
+# === Grafana ===
+grafana
+Grafana@123
+grafana123
+# === JumpServer ===
+jumpserver
+Jumpserver@123
+jumpserver123
+# === Harbor ===
+harbor
+Harbor@123
+Harbor12345
+harbor12345
+# === MinIO ===
+minio
+Minio@123
+minioadmin
+# === Nexus / SonarQube / Consul / Etcd ===
+nexus
+Nexus@123
+sonarqube
+Sonarqube@123
+sonar
+consul
+Consul@123
+etcd
+etcd@123
+# === 数据库默认(常见部署直接留默认) ===
+mysql
+Mysql@123
+mysql123
+root
+toor
+root123
+postgres
+Postgres@123
+postgres123
+mssql
+Mssql@123
+sa
+oracle
+Oracle@123
+oracle123
+redis
+Redis@123
+redis123
+mongo
+Mongo@123
+mongodb
+elastic
+Elastic@123
+elastic123
+changeme
+rabbitmq
+guest
+kafka
+kafka@123
+zookeeper
+activemq
+ActiveMQ@123
+# === 面板/堡垒机通用 ===
+admin
+admin@123
+Admin@123
+admin123
+Admin123
+changeme
+default
+Default@123
+init1234
+Init@1234

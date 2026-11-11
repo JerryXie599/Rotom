@@ -1,0 +1,94 @@
+# 网络与安全设备 —— 厂商定向弱口令表
+#
+# aliases: 网络设备,安全设备,netsec,华为,huawei,华三,h3c,锐捷,ruijie,思科,cisco,
+#          深信服,sangfor,天融信,topsec,绿盟,nsfocus,启明星辰,venustech,飞塔,fortinet,山石,hillstone
+#
+# 口径:公开流通的设备默认口令;不含任何题号绑定的信息。
+# 顺序即策略(从上到下投,不要重排):通用设备默认 → 已指纹厂商段 → 其余厂商段。
+# 指纹确认了厂商就把那一段提到最前(本表已经把"通用默认"放在最前,因为它跨厂商都成立)。
+# 型号词×年份族用生成器现场产: python3 tools/gen_product_year.py huawei h3c ruijie cisco
+
+# === 通用设备默认(不分厂商,先过这几条;设备面板/SSH/telnet 都用得上) ===
+admin
+Admin@123
+admin@123
+Admin123
+admin123
+admin888
+Admin@2023
+Admin@2024
+Admin@2025
+admin123456
+888888
+666666
+999999
+000000
+12345
+123456
+default
+Default@123
+superadmin
+Super@123
+service
+Service@123
+guest
+Guest@123
+security
+Security@123
+# === 华为 Huawei ===
+Huawei@123
+Huawei@2023
+Huawei@2024
+Huawei@2025
+huawei@123
+huawei123
+Huawei123
+Admin@huawei
+admin@huawei
+# === 华三 H3C ===
+h3c
+h3c@123
+H3c@123
+H3C@123
+h3cadmin
+admin@h3c
+# === 锐捷 Ruijie ===
+ruijie
+ruijie@123
+Ruijie@123
+Ruijie@2023
+Ruijie@2024
+admin@ruijie
+# === 思科 Cisco ===
+cisco
+cisco@123
+Cisco@123
+admin@cisco
+# === 深信服 Sangfor ===
+sangfor
+sangfor@123
+Sangfor@123
+Sangfor@2023
+Sangfor@2024
+sinfor
+admin@sangfor
+# === 天融信 / 绿盟 / 启明星辰 / 飞塔 / 山石 / 迪普 / 网康 ===
+topsec
+Topsec@123
+admin@topsec
+nsfocus
+Nsfocus@123
+admin@nsfocus
+venustech
+Venustech@123
+admin@venustech
+fortinet
+Fortinet@123
+fortigate
+admin@fortinet
+hillstone
+Hillstone@123
+admin@hillstone
+dptech
+Dptech@123
+netentsec

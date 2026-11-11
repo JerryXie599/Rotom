@@ -1,0 +1,72 @@
+# 构建上下文排除清单(托管镜像用)
+#
+# 原则:镜像里只留"解题要用的代码 + 离线知识",**绝不**带运行数据、历史战果、明文凭据。
+# 平台规则原文:"程序包内请将动态、敏感配置(密钥凭证、大模型API等)剔除,以环境变量形式读取";
+# 以及 "Agent 不可内置针对题目的历史答题记忆或解题方法,一旦发现,作为作弊处置"。
+
+# ---- 运行数据 / 历史战果(最重要的一条)----
+logs/
+work/
+projects/
+traces/
+dist/
+backup/
+board.json
+board.lock
+kb_extra/
+**/kb_extra/
+tests/
+
+# ---- 凭据与本地配置 ----
+.env
+.env.*
+!.env.example
+# providers.json 是控制台用的本地凭据库(含明文 API key);**镜像里没有任何东西读它**
+# (唯一读者 dashboard.py 本身也不进镜像)→ 2026-10-19 逐层审计发现它把两把 key 带进了镜像,直接排除。
+providers.json
+
+# ---- 本地产物 ----
+__pycache__/
+**/__pycache__/
+*.pyc
+*.bak
+*.bak-*
+dashboard.py.bak*
+*.command
+dashboard.sh
+knowledge/.kb_index.json
+knowledge/fetch_vendor.sh
+tools/vpn_debug.sh
+docker/audit_layers.sh
+docker/Dockerfile
+tools/vendor/
+.DS_Store
+.git/
+.gitignore
+docs/logo.png
+rotom-attack-graph.html
+*.log
+*.tmp
+
+# ---- 涉诈(第四策略包)那条线:跑分镜像不含 ----
+# 理由:跑分镜像是给 zhongce/pentest 用的,只需要 runner/solver/知识库/工具;**涉诈那套是本地分析工作流**
+#   (网页控制台 + 成果评读 + Excel 榜单切片),托管容器里既进不去控制台、也不跑那条线。
+# 抽出去的清单:
+#   dashboard.py / dashboard.sh  网页控制台主体(涉诈视图占大头;托管容器不启控制台,入口只跑 runner)
+#   tools/review_results.py      成果 AI 判档(只被 dashboard 调)
+#   tools/excel_targets.py       涉诈目标总表切片(只被 dashboard 调)
+#   prompts/shezha/ profiles/shezha.json knowledge/shezha.md   涉诈策略包三件套
+# 注意:这些只是**不进镜像**,仓库里照旧可用(本地 `./start.sh` + 8799 控制台不受影响)。
+# 依赖已核:跑分链路(runner/solver/start.sh --check-only)不 import 上面任何一件;
+#   profile.names() 是扫目录的,少一个包只会在列表里少一项。
+dashboard.py
+tools/review_results.py
+tools/excel_targets.py
+prompts/shezha/
+profiles/shezha.json
+knowledge/shezha.md
+# CHANGELOG 是开发日志(含历史条目),跑分不需要;留着只是徒增体积与审计面
+CHANGELOG.md
+
+# 说明:knowledge/vendor/(PayloadsAllTheThings / RsaCtfTool / nuclei-templates)是**公开**资料,
+# 要进镜像;上面的 tools/vendor/ 只是别的东西,排除。

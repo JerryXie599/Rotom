@@ -1,0 +1,17 @@
+{
+  "_说明": "8799 控制台用的模型档案库模板:复制成 providers.json(已被 .gitignore 忽略)再填真实 key;控制台的「测试模型」按档案名整组切换 base_url/key/model。api_type 对应 pi 的 provider 类型(openai-completions / anthropic-messages / openai-responses / google-generative-ai)。",
+
+  "my-provider": {
+    "PI_BASE_URL": "https://api.example.com/v1",
+    "PI_API_KEY": "<你的 API key>",
+    "PI_MODEL": "model-name",
+    "PI_API_TYPE": "openai-completions"
+  },
+
+  "another-provider": {
+    "PI_BASE_URL": "https://open.bigmodel.cn/api/anthropic",
+    "PI_API_KEY": "<你的 API key>",
+    "PI_MODEL": "GLM-5.3-Flash",
+    "PI_API_TYPE": "anthropic-messages"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "_说明": "脱敏/审计规则配置:docker/sanitize.sh 与 docker/audit_layers.sh 共用本文件。用法:cp docker/sensitive_rules.example.json docker/sensitive_rules.json 后按你的环境填写 —— sensitive_rules.json 已被 .gitignore 忽略,不会入库;缺省时脚本回退读本 example(用示例值也能跑通自检)。",
+
+  "identity_words": ["敏感词甲", "敏感词乙", "敏感词丙"],
+  "_identity_words": "身份/授权话术类禁词:你的机构要求交付物里不得出现的措辞,逐个填入(会按 '|' 拼成正则)。",
+
+  "host_path_prefix": "/Users/",
+  "_host_path_prefix": "宿主机绝对路径前缀(不要把本机用户名带进交付物)。",
+
+  "internal_endpoints": ["192.168.99.", "10.99.0."],
+  "_internal_endpoints": "自己的内网地址前缀:模型网关、实验网段等。",
+
+  "field_endpoints": ["198.51.100.", "203.0.113."],
+  "_field_endpoints": "现场/临时端点前缀(比赛现场 IP 等)。",
+
+  "contact_digits": "100000000",
+  "_contact_digits": "自己的联系方式数字串(QQ/手机等),命中即占位。",
+
+  "contact_email_domains": "qq|163|126|foxmail",
+  "_contact_email_domains": "个人邮箱域名(管道符分隔),命中即占位。",
+
+  "credential_shapes": ["[0-9a-f]{32}\\.[A-Za-z0-9]{16}", "sk--[A-Za-z0-9_-]{20,}"],
+  "_credential_shapes": "自有凭据的形态正则(不同厂商 key 的格式),万一混进交付物就打码。",
+
+  "credential_probes": ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbb", "sk--aB3xY9qW2zaB3xY9qW2zaB3xY9qW2z"],
+  "_credential_probes": "与 credential_shapes 一一对应的自检探针(假数据,必须被对应规则命中)。",
+
+  "task_id_pattern": "task_[A-Za-z0-9]{8,}",
+  "_task_id_pattern": "平台任务 ID 形态(交付物里不应出现)。",
+
+  "phone_pattern": "1[3-9][0-9]{9}",
+  "_phone_pattern": "手机号形态。",
+
+  "upstream_ok": [
+    "usr/local/lib/python3.12/ntpath.py",
+    "usr/local/lib/python3.12/site-packages/pip/_internal/utils/urls.py",
+    "usr/local/lib/libpython3.12.so.1.0"
+  ],
+  "_upstream_ok": "已核实的上游公开残留文件(如 CPython 自带路径示例),命中单列不计失败。按你镜像里的实际路径增删。"
+}

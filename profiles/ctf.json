@@ -1,0 +1,46 @@
+{
+  "name": "ctf",
+  "title": "CTF 比赛",
+  "description": "CTF 解题赛:最快拿 flag / 通关;题目与容器由平台提供;无 VPN 预检、无容器名额轮换;prompt 用 CTF 选手视角 + 六方向工具链。",
+  "goal": "flags",
+  "prompt_pack": "ctf",
+  "connection_style": "ctf",
+  "default_env_hint": "none",
+  "dispatch": {
+    "workers_per_question": 2,
+    "max_helpers": 4
+  },
+  "containers": {
+    "manage": false,
+    "rotate": false,
+    "vpn_gate": false
+  },
+  "playbooks": {
+    "pentest": "pentest.md",
+    "web": "web.md",
+    "pwn": "pwn.md",
+    "reverse": "reverse.md",
+    "re": "reverse.md",
+    "crypto": "crypto.md",
+    "forensics": "forensics.md",
+    "misc": "misc.md",
+    "取证": "forensics.md",
+    "逆向": "reverse.md",
+    "密码": "crypto.md"
+  },
+  "system_prompt": "shared/system-ctf.md",
+  "loop": {
+    "mode": "window",
+    "stop": [
+      "goal_done",
+      "platform_dead",
+      "net_gone",
+      "token_bad"
+    ],
+    "prompt_time_budget": true
+  },
+  "observer": {
+    "mode": "steps",
+    "kb_nudge_steps": 12
+  }
+}

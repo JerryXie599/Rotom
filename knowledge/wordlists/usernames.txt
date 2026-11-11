@@ -1,0 +1,86 @@
+# usernames.txt —— 用户名面(与口令表配套)
+#
+# 口径:公开可知的服务账号名/默认账号名;不含任何题号绑定的信息。
+# 用法:用户名面和口令面是**两个维度**。限速环境下不要只轰一个用户名 ——
+#       先做"用户名差分"(有的服务对不存在的用户直接硬拒,能免费枚举出有效账号),
+#       再对**有效账号**投口令。用户名不是猜的,是按场景预置的。
+
+# === 高概率段(先试这几行) ===
+admin
+administrator
+root
+sysadmin
+system
+# === 通用服务/应用账户 ===
+manager
+operator
+test
+guest
+user
+demo
+service
+backup
+deploy
+monitor
+audit
+support
+security
+# === 国产企业系统常见 ===
+oa
+oaadmin
+hr
+finance
+crm
+erp
+boss
+leader
+it
+itadmin
+# === 基础设施/数据库默认 ===
+sa
+postgres
+mysql
+oracle
+redis
+elastic
+nacos
+tomcat
+weblogic
+jboss
+zabbix
+grafana
+jenkins
+git
+gitlab
+ftp
+ftpuser
+www
+www-data
+nginx
+apache
+nobody
+ubuntu
+centos
+debian
+# === 文件/共享服务(文件服务器类目标必试) ===
+file
+fileserver
+file-server
+fileshare
+share
+sftp
+sftpuser
+ftpserver
+samba
+nas
+storage
+backup-server
+# === 云与自动化 ===
+devops
+ops
+dev
+qa
+ansible
+terraform
+runner
+ci

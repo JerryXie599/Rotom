@@ -1,0 +1,106 @@
+# 国产 OA / 管理系统 —— 厂商定向弱口令表(泛微以外的常见几家)
+#
+# aliases: 致远,seeyon,蓝凌,landray,通达,tongda,用友,yonyou,ufida,金蝶,kingdee,
+#          若依,ruoyi,fastadmin,jeecg,低代码,面板,宝塔,baota,1panel,帆软,fanruan
+#
+# 口径:公开流通的产品弱口令/默认口令条目 + 产品名形态;**不含任何题号绑定的信息**。
+# 顺序即策略(从上到下投,不要重排):每段内部 产品词@年份 → @123 族 → 产品词原文。
+# 本表年份只放示例;**完整年份族用生成器现场产**(不要靠枚举):
+#   python3 tools/gen_product_year.py --vendor 致远 --years 2023,2024,2025
+#   python3 tools/gen_product_year.py seeyon landray tongda yonyou kingdee
+#
+# 指纹:致远 A8 常见 /seeyon/、/yyoa/;蓝凌 EKP 常见 /ekp/、/sys/ui/;
+#       通达 常见 /ispirit/、/general/;用友 NC/U8 常见 /nc/、/uap/;金蝶 常见 /eas/、/kdweb/。
+
+# === 致远 Seeyon ===
+Seeyon@2023
+Seeyon@2024
+Seeyon@2025
+Seeyon@123
+seeyon@123
+seeyon123
+seeyonoa
+a8@123
+a8
+admin@seeyon
+seeyon
+# === 蓝凌 Landray ===
+Landray@2023
+Landray@2024
+Landray@2025
+Landray@123
+landray@123
+landray123
+sysadmin@landray
+ekp123
+ekp
+landray
+# === 通达 Tongda ===
+Tongda@2023
+Tongda@2024
+Tongda@2025
+Tongda@123
+tongda@123
+tongda123
+myoa
+myoa888
+td123
+td
+tongda
+# === 用友 Yonyou / UFIDA ===
+Yonyou@2023
+Yonyou@2024
+Yonyou@2025
+Yonyou@123
+yonyou@123
+yonyou123
+Ufida@123
+ufida123
+ufida
+admin@yonyou
+nc
+u8
+yonyou
+# === 金蝶 Kingdee ===
+Kingdee@2023
+Kingdee@2024
+Kingdee@2025
+Kingdee@123
+kingdee@123
+kingdee123
+Apusic@123
+apusic123
+apusic
+admin@kingdee
+eas
+k3
+kingdee
+# === 低代码 / 快速开发框架(自带默认账号) ===
+RuoYi@123
+ruoyi@123
+ruoyi123
+admin123        # RuoYi 默认 admin/admin123
+ruoyi
+fastadmin@123
+fastadmin123
+fastadmin
+jeecg@123
+jeecg123
+jeecg
+jeecgboot
+jianwen
+htoa
+fanruan
+finereport
+finedb
+wukong
+# === 面板类默认(1Panel / 宝塔) ===
+1panel_password
+1panel@123
+1panel123
+1panel
+baota@123
+baota123
+admin@baota
+baota
+bt

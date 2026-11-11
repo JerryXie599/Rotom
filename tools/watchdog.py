@@ -182,11 +182,15 @@ def platform_questions() -> tuple[int, str]:
     """查平台当前有几道题(开赛前用:主办方可能提前放题)。失败返回 -1 与原因。"""
     try:
         import config as config_mod
-        import contest_api
-        token = (config_mod.read_env().get("TEAM_TOKEN") or "").strip()
+        env = config_mod.read_env()
+        token = (env.get("BENCHMARK_TOKEN") or env.get("TEAM_TOKEN") or "").strip()
         if not token:
-            return -1, "未配置队伍 token"
-        return len(contest_api.list_questions(token, timeout=12)), ""
+            return -1, "未配置 BENCHMARK_TOKEN"
+        if (env.get("CONTEST_ADAPTER") or "tsec").lower() == "tsec":
+            import tsec_api as api
+        else:
+            import contest_api as api
+        return len(api.list_questions(token, timeout=12)), ""
     except Exception as e:
         return -1, f"{type(e).__name__}: {str(e)[:70]}"
 

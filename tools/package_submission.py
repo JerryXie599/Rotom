@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """按新版规则打包**可交付、可复测、可审计**的智能体部署包。
 
+> 注意:本工具继承自 Rotom 的 CTF 交付流程,内嵌的合规 README 文案仍是"湾区杯"口径。
+> 众测评测若没有"上交智能体复测审计"的要求,用不到它;需要交付时按平台要求改下面的模板即可。
+
 规则要求(2026 决赛手册第七条):挑战轮次结束后工作人员统一收集智能体用于复测与审计,
 需提交 .zip 或 .tar.gz,根目录附 README.md 说明:
   (1) 运行环境与依赖   (2) 配置与启动指南(含 API Key/代理/目标地址说明与一键启动脚本)
@@ -31,11 +34,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-CODE_FILES = ["runner.py", "solver.py", "board.py", "contest_api.py", "config.py",
+CODE_FILES = ["runner.py", "solver.py", "board.py", "tsec_api.py", "contest_api.py", "config.py",
               "dashboard.py", "run.sh", "dashboard.sh", "启动控制台.command", "停止控制台.command",
               "README.md"]
 CODE_DIRS = ["tools", "tests"]
-SECRET_KEYS = ("PI_API_KEY", "KIMI_API_KEY", "TEAM_TOKEN", "OPENAI_API_KEY")
+SECRET_KEYS = ("PI_API_KEY", "KIMI_API_KEY", "TEAM_TOKEN", "BENCHMARK_TOKEN", "OPENAI_API_KEY")
 
 
 def find_run_dir(project: str) -> Path:

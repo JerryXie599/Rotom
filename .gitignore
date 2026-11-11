@@ -1,33 +1,36 @@
-# ===== 密钥与凭证(绝不入库)=====
+# 运行态数据(每次跑都会重建)
 .env
-.env.local
-.nssctf_token
-tests/arena/arena.env
-*.key
-*.pem
-
-# ===== 运行时数据(每次比赛都会变,不入库)=====
+.env.*
+!.env.example
+logs/
+work/
 board.json
 board.lock
-board.tmp
-work/
-logs/
 projects/
 dist/
-traces/
-tests/localrun/
-tests/challenge_files/
-tests/mock_server.log
-tests/mock_server.out
-
-# ===== 第三方离线资料(168MB,用 knowledge/fetch_vendor.sh 重新拉取)=====
-knowledge/vendor/
-
-# ===== 缓存 =====
+backup/
 __pycache__/
 *.pyc
 .DS_Store
-.kb_index.json
+knowledge/.kb_index.json
+*.pid
+*.port
+stop.flag
+dashboard.py.bak-*
 
-# 测试运行日志
-tests/**/*.out
+# 本地 provider 凭据库(含明文 API key;只被 8799 控制台读,不进镜像、不入库)
+# 入库的是脱敏模板 providers.example.json
+providers.json
+
+# 本地脱敏规则(含机构口径的禁词/内网地址;入库的是 sensitive_rules.example.json)
+docker/sensitive_rules.json
+
+# 第三方知识库资料(不入库;clone 后跑 knowledge/fetch_vendor.sh 重建)
+knowledge/vendor/
+
+# 本地整轮容器模式的运行残留(tests/localrun-tsec 下的数据文件)
+tests/localrun-tsec/board.json
+tests/localrun-tsec/board.lock
+tests/localrun-tsec/logs/
+tests/localrun-tsec/work/
+tests/localrun-tsec/mock.out

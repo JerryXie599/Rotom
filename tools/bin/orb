@@ -1,0 +1,42 @@
+#!/bin/bash
+# orb 兼容层(托管容器用)
+#
+# 背景:知识库与提示词里历史写作 `orb -m pwn64 bash -lc '<cmd>'` —— 那是 macOS 时代为了进
+# pwn64 虚拟机跑 amd64 工具。**托管容器本身就是 Linux(amd64),工具全是原生的**,
+# 所以这里把 orb 的调用形式原样接住、直接在本地执行,保证老写法/老文档不用改也能跑。
+#
+# 支持形态:
+#   orb -m pwn64 bash -lc '<cmd>'   → 本地 bash -lc '<cmd>'
+#   orb -m pwn64 <cmd> [args...]    → 本地 <cmd> [args...]
+#   orb list / orb --version        → 打印说明
+#   orb (无参数)                    → 用法
+set -uo pipefail
+
+if [ "${1:-}" = "list" ] || [ "${1:-}" = "--version" ] || [ "${1:-}" = "-v" ]; then
+  echo "orb 兼容层:本环境是 Linux 容器(amd64),工具原生可用,无需虚拟机;"
+  echo "  orb -m <vm> <cmd...> 等价于直接执行 <cmd...>"
+  exit 0
+fi
+
+# 吃掉 -m <vm> / --machine <vm> / -p / --port 之类的入口参数
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -m|--machine) shift 2 ;;
+    -p|--port|--timeout|-t) shift 2 ;;
+    --) shift; break ;;
+    -*) shift ;;
+    *) break ;;
+  esac
+done
+
+if [ $# -eq 0 ]; then
+  echo "用法: orb -m <vm> <命令...>   (兼容层:直接执行 <命令...>)" >&2
+  exit 2
+fi
+
+# `bash -lc '<cmd>'`:最常见形态,直接交给本地 bash(保留登录 shell 语义)
+if [ "$1" = "bash" ] || [ "$1" = "sh" ] || [ "$1" = "zsh" ]; then
+  exec "$@"
+fi
+
+exec "$@"

@@ -1,0 +1,66 @@
+# 安防与物联网设备 —— 厂商定向弱口令表
+#
+# aliases: 安防,物联网,iot,摄像头,nvr,海康,hikvision,大华,dahua,宇视,uniview,雄迈,xm,天地伟业,tiandy
+#
+# 口径:公开流通的设备默认口令;不含任何题号绑定的信息。
+# 顺序即策略(从上到下投,不要重排):出厂默认(最高产) → 已指纹厂商段 → 通用账号名。
+# 用法:摄像头/NVR/门禁/网关这类设备出厂口令命中率极高(很多就没改过),
+#       而且 Web 面板 / RTSP / ONVIF / telnet 往往**共用同一组凭据** —— 一次命中可多点复用。
+
+# === 出厂默认(这几条命中率最高) ===
+admin
+12345
+admin12345
+admin123
+admin888
+888888
+666666
+000000
+111111
+123456
+password
+pass
+# === 海康威视 Hikvision ===
+hik12345
+Hik12345
+Hikvision@123
+Hikvision@2023
+hikvision
+admin@hikvision
+# === 大华 Dahua ===
+dahua123
+Dahua@123
+dahua@123
+admin@dahua
+# === 宇视 Uniview ===
+uniview
+Uniview@123
+admin@uniview
+# === 雄迈 XM / 天地伟业 Tiandy ===
+xm123
+Xm@123
+tiandy
+Tiandy@123
+# === 家用路由 / 网关 ===
+tplink
+tp-link
+tenda
+Tenda@123
+netcore
+netcore123
+# === 通用账号名(也常被当口令) ===
+guest
+Guest@123
+root
+Root@123
+root123
+support
+Support@123
+service
+Service@123
+operator
+Operator@123
+useradmin
+User@123
+Admin@2024
+Admin@2025

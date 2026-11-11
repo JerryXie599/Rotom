@@ -1,0 +1,24 @@
+{
+  "_说明": "正式渗透(PROFILE=pentest)的目标清单模板。复制成数据目录下的 targets.json 再改。",
+  "engagement": "客户A-外网渗透(已签署授权书)",
+  "targets": [
+    {
+      "id": "web-01",
+      "name": "官网",
+      "address": "https://www.example.com",
+      "notes": "登录口与 /api 均可测;重点看越权与注入"
+    },
+    {
+      "id": "api-02",
+      "name": "API 网关",
+      "address": "https://api.example.com",
+      "notes": "只测鉴权与越权;不要碰订单写入类接口"
+    },
+    {
+      "id": "net-03",
+      "name": "办公网段",
+      "address": "10.0.0.0/24",
+      "notes": "授权范围仅 10.0.0.0/24;弱口令只允许小字典"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+# 泛微 OA(Weaver / e-cology / e-office) —— 厂商定向弱口令表
+#
+# aliases: 泛微,泛微OA,weaver,ecology,eoffice,e-cology,e-office
+#
+# 口径:公开流通的泛微产品弱口令/默认口令条目 + 产品名形态。**不含任何题号绑定的信息**。
+# 顺序即策略(限速环境下按行从上到下投,不要重排):产品词@年份 → @123 族 → 产品词原文 → 部署账号名。
+# 本表只放示例年份;**完整年份族用生成器现场产**(目标可能用任意年份与分隔符):
+#   python3 tools/gen_product_year.py --vendor 泛微 --years 2023,2024,2025
+#
+# 指纹:e-cology 常见 /wui/index.html、/mobile/plugin/1/ofsLogin.jsp、/weaver/ 路径;
+#       e-office 常见 /general/、/E-mobile/。名字对上就用本表。
+
+# === ① 产品词 @ 年份(国产 OA 最主流的写法,第一发就打这里) ===
+Weaver@2023
+Weaver@2024
+Weaver@2025
+weaver@2023
+weaver@2024
+weaver@2025
+Ecology@2023
+Ecology@2024
+Ecology@2025
+ecology@2023
+ecology@2024
+ecology@2025
+EOffice@123
+EOffice@2024
+# === ② 产品词 + 常用收尾 ===
+weaver123
+Weaver123
+weaver@123
+Weaver@123
+weaver888
+Weaver888
+ecology123
+Ecology123
+ecology@123
+Ecology@123
+eoffice@123
+eoffice123
+emobile@123
+wui123
+weaver2023
+Weaver2023
+weaver2024
+Weaver2024
+# === ③ 产品词原文(部署里直接拿产品名当口令的老习惯) ===
+weaver
+ecology
+eoffice
+e-mobile
+emobile
+wui
+weaver.com.cn
+ecology.com.cn
+# === ④ 泛微部署里最常见的账号名(也常被当口令用) ===
+sysadmin
+sysadmin123
+sysadmin@123
+oa
+oaadmin
+oa123
+oa123456
+admin@weaver
+weaver@admin

@@ -1,0 +1,92 @@
+# vendor-vocab.txt —— 厂商/产品 → 词根表(喂 tools/gen_product_year.py 生成"产品词×年份"候选族)
+#
+# 口径:只收录**公开可知的厂商名与产品名**(官网/公告/安装包里的名字),
+#       不含任何题号绑定的信息,也不含具体口令 —— 口令由生成器按形态现场算。
+# 用法:指纹识别出厂商后,取对应行的产品词喂生成器:
+#   python3 tools/gen_product_year.py weaver ecology            # 指定词根
+#   python3 tools/gen_product_year.py --vendor 泛微              # 按厂商名取词根
+#   python3 tools/gen_product_year.py weaver --years 2022-2025   # 指定年份区间
+#
+# 为什么需要它:国产 OA/设备的口令设计有很强的"产品词+年份"习惯
+#   (weaver@2023 / Ecology@2024 / Huawei@2023 这类)。这类形态**用通用泄露字典永远覆盖不到**,
+#   必须按指纹现场生成 —— 生成成本几乎为零,漏了却要拿限速通道的每一发去补。
+
+# === 国产 OA / 协同办公 ===
+泛微|weaver,ecology,eoffice,e-mobile,wui
+致远|seeyon,seeyonoa,a8
+蓝凌|landray,ekp
+通达|tongda,td
+用友|yonyou,ufida,nc,u8
+金蝶|kingdee,apusic,eas,k3
+华天动力|htoa
+帆软|fanruan,finedb,finereport
+若依|ruoyi
+JeecgBoot|jeecg,jeecgboot
+FastAdmin|fastadmin
+悟空CRM|wukong
+建文|jianwen
+
+# === 面板 / 运维 ===
+宝塔|baota,bt
+1Panel|1panel
+JumpServer|jumpserver
+Zabbix|zabbix
+Grafana|grafana
+Jenkins|jenkins
+GitLab|gitlab
+Nacos|nacos
+Tomcat|tomcat
+WebLogic|weblogic
+JBoss|jboss
+WebSphere|websphere
+
+# === 数据库 / 中间件 ===
+MySQL|mysql
+PostgreSQL|postgres
+MSSQL|mssql
+Oracle|oracle
+Redis|redis
+MongoDB|mongo,mongodb
+Elasticsearch|elastic,elasticsearch
+RabbitMQ|rabbitmq
+ActiveMQ|activemq
+Harbor|harbor
+MinIO|minio
+Nexus|nexus
+SonarQube|sonarqube,sonar
+ZooKeeper|zookeeper
+Kafka|kafka
+Consul|consul
+Etcd|etcd
+
+# === 网络 / 安全设备 ===
+华为|huawei
+华三|h3c
+锐捷|ruijie
+思科|cisco
+深信服|sangfor,sinfor
+天融信|topsec
+绿盟|nsfocus
+启明星辰|venustech
+奇安信|qianxin
+飞塔|fortinet,fortigate
+山石|hillstone
+迪普|dptech
+网康|网康,netentsec
+
+# === 安防 / 物联网 ===
+海康威视|hikvision,hik
+大华|dahua
+宇视|uniview
+雄迈|xm
+天地伟业|tiandy
+普联|tplink,tp-link
+腾达|tenda
+磊科|netcore
+
+# === 云 / 虚拟化 ===
+VMware|vmware
+Proxmox|proxmox
+OpenStack|openstack
+Citrix|citrix
+深信服云|sangforcloud
